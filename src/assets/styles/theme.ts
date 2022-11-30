@@ -6,12 +6,18 @@ export const theme = {
     lightBlue: '#ABEDC6',
     blue: '#78A1BB',
     darkBlue: '#283044',
+    red: 'red',
   },
   fontSize: {
     s: '15px',
     m: '20px',
     l: '25px',
     xl: '35px',
+  },
+  borderRadius: {
+    s: '6px',
+    m: '20px',
+    l: '30px',
   },
   mq: {
     tablet: '@media (min-width: 760px)',

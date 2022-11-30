@@ -1,8 +1,11 @@
 import { GlobalStyle } from 'assets/styles/GlobalStyles';
-import React from 'react';
+import React, { useContext } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import { theme } from 'assets/styles/theme';
-import StartView from 'views/StartView/StartView';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthContext } from 'context/AuthContext/AuthContext';
+import AuthPage from 'views/AuthPage/AuthPage';
+import NotAuthPage from 'views/NotAuthPage/NotAuthPage';
 
 const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.lightBlue};
@@ -11,11 +14,17 @@ const Wrapper = styled.div`
 `;
 
 const App = () => {
+  const {
+    state: { currentUser },
+  } = useContext(AuthContext);
+
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <Wrapper>
-        <StartView />
+        <BrowserRouter>
+          {currentUser ? <AuthPage /> : <NotAuthPage />}
+        </BrowserRouter>
       </Wrapper>
     </ThemeProvider>
   );
