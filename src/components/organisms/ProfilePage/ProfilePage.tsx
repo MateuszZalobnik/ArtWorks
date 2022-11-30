@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { updateDoc } from 'firebase/firestore';
 import { storage } from 'firabase-config';
 import profilePlaceholder from 'assets/imgs/profilePlaceholder.svg';
 import publish from 'assets/imgs/publish.svg';
@@ -47,11 +46,17 @@ const UploadProfileButton = styled.div`
 
 const ProfilePage: React.FC = () => {
   const [profileImageUrl, setProfileImageUrl] = useState('');
-  const { userData, getData, loading, userDocRef } = useFirestore();
-  const { deleteFile, uploadFile, currentUrl } = useStorage();
+  const {
+    userData,
+    getData,
+    firestoreLoading,
+    userDocRef,
+    setFirestoreLoading,
+  } = useFirestore();
+  const { deleteFile, uploadFile, storageLoading } = useStorage();
   const hiddenFileInput = useRef<any>(null);
 
-  const handleClick = (event: any) => {
+  const handleClick = () => {
     hiddenFileInput.current.click();
   };
 
@@ -64,16 +69,9 @@ const ProfilePage: React.FC = () => {
         if ('profileImgPath' in userData && userData.profileImgPath != '') {
           setProfileImageUrl('');
           deleteFile(userData.profileImgPath);
-          await updateDoc(userDocRef, {
-            profileImgPath: '',
-          });
         }
         const imagePath = `artworks/${userData.id}/profileImage/${fileUploaded.name}`;
         uploadFile(imagePath, fileUploaded);
-        setProfileImageUrl(currentUrl);
-        await updateDoc(userDocRef, {
-          profileImgPath: imagePath,
-        });
       }
     };
 
@@ -81,10 +79,15 @@ const ProfilePage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (loading == true) {
-      getData();
+    if (firestoreLoading == true || storageLoading == true) {
+      getData(userDocRef);
     } else {
-      if (userData && 'profileImgPath' in userData) {
+      console.log(userData);
+      if (
+        userData &&
+        'profileImgPath' in userData &&
+        userData.profileImgPath != ''
+      ) {
         const imageRef = ref(storage, userData.profileImgPath);
 
         getDownloadURL(imageRef)
@@ -93,10 +96,11 @@ const ProfilePage: React.FC = () => {
           })
           .catch(() => {
             console.log('wait...');
+            setFirestoreLoading(true);
           });
       }
     }
-  }, [profileImageUrl, loading]);
+  }, [profileImageUrl, uploadFile, firestoreLoading, storageLoading]);
 
   return (
     <Wrapper>
