@@ -13,6 +13,8 @@ import {
   getDocs,
 } from '@firebase/firestore';
 import { Link } from 'react-router-dom';
+import useFirestore from 'hooks/useFirestore/useFirestore';
+import Logo from 'components/atoms/Logo/Logo';
 
 const Wrapper = styled.div`
   display: flex;
@@ -29,22 +31,27 @@ const Form = styled.form`
   align-self: center;
   margin-top: 100px;
   width: 80%;
-  padding: 20px 10px;
+  position: relative;
+  padding: 40px 10px;
   background-color: ${({ theme }) => theme.colors.blue};
   color: ${({ theme }) => theme.colors.darkBlue};
   font-size: ${({ theme }) => theme.fontSize.l};
-  border-radius: ${({ theme }) => theme.borderRadius.m};
+  border-radius: ${({ theme }) => theme.borderRadius.s};
   input {
     outline: none;
     margin-top: 20px;
     color: ${({ theme }) => theme.colors.darkBlue};
     font-size: ${({ theme }) => theme.fontSize.l};
-    background-color: ${({ theme }) => theme.colors.grey};
+    background-color: ${({ theme }) => theme.colors.white};
     border-radius: ${({ theme }) => theme.borderRadius.s};
     border: none;
     :focus {
       outline: ${({ theme }) => theme.colors.darkBlue} solid 2px;
     }
+  }
+
+  ${({ theme }) => theme.mq.desktop} {
+    width: 20%;
   }
 `;
 
@@ -97,7 +104,14 @@ const StyledLink = styled(Link)`
   border-radius: ${({ theme }) => theme.borderRadius.m};
 `;
 
-const RegistrationPage = () => {
+const LogoWrapper = styled.div`
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translate(-50%);
+`;
+
+const SignupPage = () => {
   const [completeRegister, setCompleteRegister] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -174,14 +188,20 @@ const RegistrationPage = () => {
           userData.email,
           password
         );
-        await setDoc(doc(db, 'users', res.user.uid), {
+        const userRef = doc(db, 'users', res.user.uid);
+        await setDoc(userRef, {
           ...userData,
           id: res.user.uid,
+          category: 'music',
+          description:
+            'Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.',
+          numberOfViews: ['fews3232f2dasf1', 'admk3d2', 'fwescsdsqc'],
+          numberOfFollows: ['fews3232f2dasf1', 'admk3d2'],
         });
 
         setCompleteRegister(true);
       } catch (err) {
-        // console.log(err);
+        console.log(err);
       }
     }
   };
@@ -194,7 +214,6 @@ const RegistrationPage = () => {
   };
   return (
     <Wrapper>
-      <Header />
       {completeRegister ? (
         <CompleteRegisterWrapper>
           Udało się założyć konto
@@ -202,6 +221,9 @@ const RegistrationPage = () => {
         </CompleteRegisterWrapper>
       ) : (
         <Form onSubmit={handleRegister}>
+          <LogoWrapper>
+            <Logo props />
+          </LogoWrapper>
           <H3>Zarejestruj się</H3>
           <input
             id="username"
@@ -248,4 +270,4 @@ const RegistrationPage = () => {
   );
 };
 
-export default RegistrationPage;
+export default SignupPage;

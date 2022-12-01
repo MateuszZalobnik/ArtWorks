@@ -1,10 +1,10 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
-import Header from 'components/molecules/Header/Header';
 import { auth } from 'firabase-config';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { AuthContext } from 'context/AuthContext/AuthContext';
 import { Link } from 'react-router-dom';
+import Logo from 'components/atoms/Logo/Logo';
 
 const Wrapper = styled.div`
   display: flex;
@@ -21,22 +21,27 @@ const Form = styled.form`
   align-self: center;
   margin-top: 100px;
   width: 80%;
-  padding: 20px 10px;
+  padding: 40px 10px;
+  position: relative;
   background-color: ${({ theme }) => theme.colors.blue};
   color: ${({ theme }) => theme.colors.darkBlue};
   font-size: ${({ theme }) => theme.fontSize.l};
-  border-radius: ${({ theme }) => theme.borderRadius.m};
+  border-radius: ${({ theme }) => theme.borderRadius.s};
   input {
     outline: none;
     margin-top: 20px;
     color: ${({ theme }) => theme.colors.darkBlue};
     font-size: ${({ theme }) => theme.fontSize.l};
-    background-color: ${({ theme }) => theme.colors.grey};
+    background-color: ${({ theme }) => theme.colors.white};
     border-radius: ${({ theme }) => theme.borderRadius.s};
     border: none;
     :focus {
       outline: ${({ theme }) => theme.colors.darkBlue} solid 2px;
     }
+  }
+
+  ${({ theme }) => theme.mq.desktop} {
+   width: 20%;
   }
 `;
 
@@ -76,6 +81,13 @@ const RegistrationLink = styled(Link)`
   justify-content: center;
 `;
 
+const LogoWrapper = styled.div`
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translate(-50%);
+`;
+
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -99,8 +111,10 @@ const LoginPage = () => {
 
   return (
     <Wrapper>
-      <Header />
       <Form onSubmit={handleLogin}>
+        <LogoWrapper>
+          <Logo props />
+        </LogoWrapper>
         <H3>Zaloguj się</H3>
         <input
           id="email"
@@ -117,7 +131,7 @@ const LoginPage = () => {
         <PasswordReset>zapomniałem hasła</PasswordReset>
         {error != '' ? <ErrorMessage>{error}</ErrorMessage> : null}
         <Button type="submit">Zaloguj</Button>
-        <RegistrationLink to="/register">Dołącz teraz</RegistrationLink>
+        <RegistrationLink to="/signup">Dołącz teraz</RegistrationLink>
       </Form>
     </Wrapper>
   );

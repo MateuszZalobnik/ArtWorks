@@ -6,9 +6,10 @@ import publish from 'assets/imgs/publish.svg';
 import { ref, getDownloadURL } from 'firebase/storage';
 import useFirestore from 'hooks/useFirestore/useFirestore';
 import useStorage from 'hooks/useStorage/useStorage';
+import AuthNav from 'components/molecules/AuthNav/AuthNav';
 
 const Wrapper = styled.div`
-  padding: 50px 0;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -17,6 +18,7 @@ const Wrapper = styled.div`
 `;
 
 const ImgWrapper = styled.div`
+  width: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -25,11 +27,6 @@ const ImgWrapper = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  border: 5px solid ${({ theme }) => theme.colors.blue};
-  background-color: ${({ theme }) => theme.colors.grey};
   object-fit: cover;
 `;
 
@@ -41,7 +38,20 @@ const Username = styled.div`
 const UploadProfileButton = styled.div`
   position: absolute;
   right: 0;
-  top: 0;
+  bottom: 0;
+`;
+
+const InfoWrapper = styled.div`
+  color: ${({ theme }) => theme.colors.darkBlue};
+  background-color: ${({ theme }) => theme.colors.white};
+  padding-bottom: 200px;
+`;
+
+const PostWrapper = styled.div`
+  padding-top: 200px;
+  -webkit-box-shadow: 0px -51px 64px 70px rgba(40, 48, 68, 1);
+  -moz-box-shadow: 0px -51px 64px 70px rgba(40, 48, 68, 1);
+  box-shadow: 0px -51px 64px 70px rgba(40, 48, 68, 1);
 `;
 
 const ProfilePage: React.FC = () => {
@@ -104,6 +114,7 @@ const ProfilePage: React.FC = () => {
 
   return (
     <Wrapper>
+      <AuthNav />
       {userData ? (
         <>
           <ImgWrapper>
@@ -120,7 +131,13 @@ const ProfilePage: React.FC = () => {
               style={{ display: 'none' }}
             />
           </ImgWrapper>
-          <Username>{userData.username}</Username>
+          <InfoWrapper>
+            <Username>{userData.username}</Username>
+            {userData.description} <br />
+            {userData.numberOfViews.length}
+            {userData.numberOfFollows.length}
+          </InfoWrapper>
+          <PostWrapper></PostWrapper>
         </>
       ) : (
         <>

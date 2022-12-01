@@ -6,6 +6,7 @@ import {
   onSnapshot,
   updateDoc,
   DocumentReference,
+  setDoc,
 } from 'firebase/firestore';
 import { db } from 'firabase-config';
 import { AuthContext } from 'context/AuthContext/AuthContext';
@@ -33,10 +34,10 @@ const useFirestore = () => {
 
   const updateDocument = async (
     DocRef: DocumentReference<DocumentData>,
-    values: object
+    value: object
   ) => {
     try {
-      await updateDoc(DocRef, values);
+      await updateDoc(DocRef, value);
       setFirestoreLoading(true);
     } catch (err) {
       console.log('error');

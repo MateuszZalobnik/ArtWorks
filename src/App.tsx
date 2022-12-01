@@ -8,7 +8,7 @@ import AuthPage from 'views/AuthPage/AuthPage';
 import NotAuthPage from 'views/NotAuthPage/NotAuthPage';
 
 const Wrapper = styled.div`
-  background-color: ${({ theme }) => theme.colors.lightBlue};
+  background-color: ${({ theme }) => theme.colors.darkBlue};
   min-height: 100vh;
   width: 100%;
 `;
