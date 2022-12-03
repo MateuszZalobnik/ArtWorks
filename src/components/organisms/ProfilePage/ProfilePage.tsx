@@ -2,11 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { storage } from 'firabase-config';
 import profilePlaceholder from 'assets/imgs/profilePlaceholder.svg';
-import publish from 'assets/imgs/publish.svg';
 import { ref, getDownloadURL } from 'firebase/storage';
 import useFirestore from 'hooks/useFirestore/useFirestore';
 import useStorage from 'hooks/useStorage/useStorage';
-import AuthNav from 'components/molecules/AuthNav/AuthNav';
+import { FaHeadphones } from 'react-icons/fa';
+import { BsUpload } from 'react-icons/bs';
 
 const Wrapper = styled.div`
   position: relative;
@@ -27,31 +27,84 @@ const ImgWrapper = styled.div`
 `;
 
 const ProfileImage = styled.img`
+  height: 35vh;
   object-fit: cover;
 `;
 
 const Username = styled.div`
+  padding-left: 8px;
+  display: flex;
+  flex: wrap;
+  width: 70%;
   font-size: ${({ theme }) => theme.fontSize.l};
   font-weight: 700;
 `;
 
 const UploadProfileButton = styled.div`
+  font-size: ${({ theme }) => theme.fontSize.xxl};
   position: absolute;
-  right: 0;
+  left: 0;
   bottom: 0;
 `;
 
 const InfoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   color: ${({ theme }) => theme.colors.darkBlue};
   background-color: ${({ theme }) => theme.colors.white};
+  background: linear-gradient(
+    ${({ theme }) => theme.colors.white} 50%,
+    ${({ theme }) => theme.colors.darkBlue}
+  );
   padding-bottom: 200px;
 `;
 
 const PostWrapper = styled.div`
+  height: 505px;
   padding-top: 200px;
-  -webkit-box-shadow: 0px -51px 64px 70px rgba(40, 48, 68, 1);
-  -moz-box-shadow: 0px -51px 64px 70px rgba(40, 48, 68, 1);
-  box-shadow: 0px -51px 64px 70px rgba(40, 48, 68, 1);
+`;
+
+const NumberWrapper = styled.div`
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+`;
+const Number = styled.div`
+  line-height: 24px;
+  display: flex;
+  flex-direction: column;
+  font-weight: 700;
+  font-size: ${({ theme }) => theme.fontSize.xl};
+  width: 30%;
+  :first-child {
+    border-right: 4px solid ${({ theme }) => theme.colors.darkBlue};
+  }
+
+  span {
+    font-size: ${({ theme }) => theme.fontSize.m};
+    font-weight: 400;
+  }
+`;
+
+const DescriptionWrapper = styled.div`
+  font-size: ${({ theme }) => theme.fontSize.m};
+`;
+
+const CategoryWrapper = styled.div`
+  background-color: ${({ theme }) => theme.colors.white};
+  position: absolute;
+  right: 20px;
+  bottom: -50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: ${({ theme }) => theme.fontSize.xxl};
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border-bottom: 4px solid ${({ theme }) => theme.colors.darkBlue};
+  border-left: 2px solid ${({ theme }) => theme.colors.darkBlue};
+  border-right: 2px solid ${({ theme }) => theme.colors.darkBlue};
 `;
 
 const ProfilePage: React.FC = () => {
@@ -88,6 +141,18 @@ const ProfilePage: React.FC = () => {
     uploadImage();
   };
 
+  const CategoryView = () => {
+    if (userData) {
+      switch (userData.category) {
+        case 'music':
+          return <FaHeadphones />;
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
   useEffect(() => {
     if (firestoreLoading == true || storageLoading == true) {
       getData(userDocRef);
@@ -114,7 +179,6 @@ const ProfilePage: React.FC = () => {
 
   return (
     <Wrapper>
-      <AuthNav />
       {userData ? (
         <>
           <ImgWrapper>
@@ -122,7 +186,7 @@ const ProfilePage: React.FC = () => {
               src={profileImageUrl != '' ? profileImageUrl : profilePlaceholder}
             />
             <UploadProfileButton onClick={handleClick}>
-              <img src={publish} />
+              <BsUpload />
             </UploadProfileButton>
             <input
               type="file"
@@ -130,12 +194,21 @@ const ProfilePage: React.FC = () => {
               onChange={handleChange}
               style={{ display: 'none' }}
             />
+            <CategoryWrapper>{CategoryView()}</CategoryWrapper>
           </ImgWrapper>
           <InfoWrapper>
             <Username>{userData.username}</Username>
-            {userData.description} <br />
-            {userData.numberOfViews.length}
-            {userData.numberOfFollows.length}
+            <NumberWrapper>
+              <Number>
+                {userData.numberOfViews.length}
+                <span>views</span>
+              </Number>
+              <Number>
+                {userData.numberOfFollows.length}
+                <span>follows</span>
+              </Number>
+            </NumberWrapper>
+            <DescriptionWrapper>{userData.description}</DescriptionWrapper>
           </InfoWrapper>
           <PostWrapper></PostWrapper>
         </>

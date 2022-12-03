@@ -1,41 +1,163 @@
-import React, { useContext } from 'react';
-import styled from 'styled-components';
+import React, { useContext, useState } from 'react';
+import styled, { keyframes } from 'styled-components';
 import { AuthContext } from 'context/AuthContext/AuthContext';
 import Logo from 'components/atoms/Logo/Logo';
+import { BsList } from 'react-icons/bs';
+import { NavLink } from 'react-router-dom';
 
-const Wrapper = styled.div`
-  z-index: 1000;
+const MenuButton = styled(BsList)`
+  position: fixed;
   top: 0;
-  position: absolute;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-self: center;
+  right: 0;
+  font-size: 70px;
+  z-index: 1000;
+  background-color: ${({ theme }) => theme.colors.blue};
+  border-radius: 20px 0px 0px 20px;
 `;
 
-const LogoutButton = styled.button`
+const StyledLink = styled(NavLink)`
   border: none;
-  background-color: ${({ theme }) => theme.colors.blue};
-  color: ${({ theme }) => theme.colors.darkBlue};
+  border-bottom: 3px solid ${({ theme }) => theme.colors.darkBlue};
   font-size: ${({ theme }) => theme.fontSize.l};
   display: flex;
+  justify-content: center;
   padding: 5px 10px;
   border-radius: 20px;
   text-decoration: none;
+  color: ${({ theme }) => theme.colors.darkBlue};
+
+  &.active {
+    background-color: ${({ theme }) => theme.colors.darkBlue} !important;
+    color: ${({ theme }) => theme.colors.grey};
+  }
+`;
+
+const LogoutButton = styled.div`
+  position: absolute;
+  top: 10px;
+  left: 5px;
+  padding: 5px 20px;
+  border-radius: 20px;
+  background-color: ${({ theme }) => theme.colors.darkBlue};
+  color: ${({ theme }) => theme.colors.blue};
+  font-size: ${({ theme }) => theme.fontSize.l};
+`;
+
+const slideLeft = keyframes`
+  from {
+    margin-left: 100%;
+    z-index: 2;
+  
+  }
+
+  to {
+    margin-left: 0px;
+    z-index: 2;
+  
+  }
+`;
+
+const slideRight = keyframes`
+  from {
+    margin-left: 0px;
+    z-index: 2;
+  }
+
+  to {
+    margin-left: 100%;
+    z-index: 2;
+  }
+`;
+
+const Nav = styled.div<{ isOpen: boolean }>`
+  animation: ${(props) => (props.isOpen ? slideLeft : slideRight)} 1s;
+  margin-left: ${(props) => (props.isOpen ? '0' : '100%')};
+  display: flex;
+  background-color: ${({ theme }) => theme.colors.blue};
+  color: ${({ theme }) => theme.colors.darkBlue};
+  padding: 70px 80px;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 2;
+  height: 100vh;
+  width: 100%;
+  background-color: ${({ theme }) => theme.colors.blue};
+  position: fixed;
+  ul {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0;
+    list-style-type: none;
+    li {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-top: 40px;
+    }
+  }
+`;
+
+const SearchInput = styled.input`
+  border: none;
+  border-bottom: 3px solid ${({ theme }) => theme.colors.darkBlue};
+  background-color: ${({ theme }) => theme.colors.grey};
+  color: ${({ theme }) => theme.colors.darkBlue};
+  font-size: ${({ theme }) => theme.fontSize.l};
+  display: flex;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 20px;
+
+  :focus {
+    outline: ${({ theme }) => theme.colors.darkBlue} solid 2px;
+  }
 `;
 
 const AuthNav: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const { dispatch } = useContext(AuthContext);
   const handleLogout = () => {
     dispatch({ type: 'LOGIN', payload: null });
   };
 
+  const openNav = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <Wrapper>
-      <Logo props />
-      <LogoutButton onClick={handleLogout}>Wyloguj się</LogoutButton>
-    </Wrapper>
+    <>
+      <MenuButton onClick={openNav} />
+      <Nav isOpen={isOpen}>
+        <ul>
+          <li>
+            <Logo props />
+          </li>
+          <li>
+            <SearchInput type="text" placeholder="search" />
+          </li>
+          <li>
+            <StyledLink
+              onClick={openNav}
+              className={({ isActive }) => (isActive ? 'active' : undefined)}
+              to="/"
+            >
+              odkrywaj
+            </StyledLink>
+          </li>
+          <li>
+            <StyledLink
+              onClick={openNav}
+              to="/login"
+              className={({ isActive }) => (isActive ? 'active' : undefined)}
+            >
+              moje konto
+            </StyledLink>
+          </li>
+        </ul>
+        <LogoutButton onClick={handleLogout}>wyloguj się</LogoutButton>
+      </Nav>
+    </>
   );
 };
 

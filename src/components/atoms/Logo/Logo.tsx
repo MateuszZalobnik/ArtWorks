@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 const LogoWrapper = styled(Link)`
   font-size: ${({ theme }) => theme.fontSize.xl};
+  height: max-content;
   font-weight: 700;
   text-decoration: none;
   display: flex;
