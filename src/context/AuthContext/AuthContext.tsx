@@ -1,14 +1,16 @@
+import { auth } from 'firabase-config';
+import { onAuthStateChanged, User } from 'firebase/auth';
 import React, { createContext, useEffect, useReducer } from 'react';
 import AuthReducer from './AuthReducer';
 
 const initialState = {
-  currentUser: localStorage.getItem('user')
-    ? JSON.parse(localStorage.getItem('user') || '')
-    : null,
+  currentUser: auth.currentUser ? auth.currentUser : null,
+  uid: auth.currentUser ? auth.currentUser.uid : null,
 };
 
 type initialStateType = {
-  currentUser: any;
+  currentUser: User | null;
+  uid: any;
 };
 
 export const AuthContext = createContext<{
@@ -25,7 +27,13 @@ export const AuthContextProvider: React.FC<{ children: JSX.Element }> = ({
   const [state, dispatch] = useReducer(AuthReducer, initialState);
 
   useEffect(() => {
-    localStorage.setItem('user', JSON.stringify(state.currentUser));
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        dispatch({ type: 'LOGIN', payload: user });
+      } else {
+        dispatch({ type: 'LOGOUT', payload: user });
+      }
+    });
   }, [state.currentUser]);
 
   return (

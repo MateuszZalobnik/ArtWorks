@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { storage } from 'firabase-config';
+import { auth, storage } from 'firabase-config';
 import profilePlaceholder from 'assets/imgs/profilePlaceholder.svg';
 import { ref, getDownloadURL } from 'firebase/storage';
 import useFirestore from 'hooks/useFirestore/useFirestore';
@@ -154,6 +154,7 @@ const ProfilePage: React.FC = () => {
   };
 
   useEffect(() => {
+
     if (firestoreLoading == true || storageLoading == true) {
       getData(userDocRef);
     } else {

@@ -41,7 +41,7 @@ const Form = styled.form`
   }
 
   ${({ theme }) => theme.mq.desktop} {
-   width: 20%;
+    width: 20%;
   }
 `;
 
@@ -100,7 +100,7 @@ const LoginPage = () => {
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        const user = userCredential.user.uid;
+        const user = userCredential.user;
         setError('');
         dispatch({ type: 'LOGIN', payload: user });
       })

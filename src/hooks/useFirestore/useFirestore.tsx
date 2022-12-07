@@ -6,7 +6,6 @@ import {
   onSnapshot,
   updateDoc,
   DocumentReference,
-  setDoc,
 } from 'firebase/firestore';
 import { db } from 'firabase-config';
 import { AuthContext } from 'context/AuthContext/AuthContext';
@@ -15,10 +14,10 @@ const useFirestore = () => {
   const [userData, setUserData] = useState<DocumentData>();
   const [firestoreLoading, setFirestoreLoading] = useState(true);
   const {
-    state: { currentUser },
+    state: { uid },
   } = useContext(AuthContext);
 
-  const userDocRef = doc(db, 'users', currentUser);
+  const userDocRef = doc(db, 'users', uid);
 
   const getData = async (DocRef: DocumentReference<DocumentData>) => {
     try {

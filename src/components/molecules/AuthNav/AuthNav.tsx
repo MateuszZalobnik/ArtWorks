@@ -3,7 +3,9 @@ import styled, { keyframes } from 'styled-components';
 import { AuthContext } from 'context/AuthContext/AuthContext';
 import Logo from 'components/atoms/Logo/Logo';
 import { BsList } from 'react-icons/bs';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
+import { auth } from 'firabase-config';
 
 const MenuButton = styled(BsList)`
   position: fixed;
@@ -32,7 +34,8 @@ const StyledLink = styled(NavLink)`
   }
 `;
 
-const LogoutButton = styled.div`
+const LogoutButton = styled(Link)`
+  text-decoration: none;
   position: absolute;
   top: 10px;
   left: 5px;
@@ -118,7 +121,13 @@ const AuthNav: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { dispatch } = useContext(AuthContext);
   const handleLogout = () => {
-    dispatch({ type: 'LOGIN', payload: null });
+    signOut(auth)
+      .then(() => {
+        dispatch({ type: 'LOGOUT' });
+      })
+      .catch((error) => {
+        // An error happened.
+      });
   };
 
   const openNav = () => {
@@ -155,7 +164,9 @@ const AuthNav: React.FC = () => {
             </StyledLink>
           </li>
         </ul>
-        <LogoutButton onClick={handleLogout}>wyloguj się</LogoutButton>
+        <LogoutButton to="/login" onClick={handleLogout}>
+          wyloguj się
+        </LogoutButton>
       </Nav>
     </>
   );

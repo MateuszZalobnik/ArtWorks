@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Header from 'components/molecules/Header/Header';
 import { auth, db } from 'firabase-config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import {
@@ -13,7 +12,6 @@ import {
   getDocs,
 } from '@firebase/firestore';
 import { Link } from 'react-router-dom';
-import useFirestore from 'hooks/useFirestore/useFirestore';
 import Logo from 'components/atoms/Logo/Logo';
 
 const Wrapper = styled.div`
@@ -80,30 +78,6 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-const CompleteRegisterWrapper = styled.div`
-  display: flex;
-  text-align: center;
-  flex-direction: column;
-  justify-content: center;
-  align-self: center;
-  margin-top: 100px;
-  width: 80%;
-  padding: 20px 10px;
-  background-color: ${({ theme }) => theme.colors.blue};
-  color: ${({ theme }) => theme.colors.darkBlue};
-  font-size: ${({ theme }) => theme.fontSize.l};
-  border-radius: ${({ theme }) => theme.borderRadius.m};
-`;
-
-const StyledLink = styled(Link)`
-  margin-top: 30px;
-  padding: 10px;
-  text-decoration: none;
-  background-color: ${({ theme }) => theme.colors.darkBlue};
-  color: ${({ theme }) => theme.colors.grey};
-  border-radius: ${({ theme }) => theme.borderRadius.m};
-`;
-
 const LogoWrapper = styled.div`
   position: absolute;
   top: -30px;
@@ -112,7 +86,6 @@ const LogoWrapper = styled.div`
 `;
 
 const SignupPage = () => {
-  const [completeRegister, setCompleteRegister] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [userData, setUserData] = useState({
@@ -198,8 +171,6 @@ const SignupPage = () => {
           numberOfViews: ['fews3232f2dasf1', 'admk3d2', 'fwescsdsqc'],
           numberOfFollows: ['fews3232f2dasf1', 'admk3d2'],
         });
-
-        setCompleteRegister(true);
       } catch (err) {
         console.log(err);
       }
@@ -214,58 +185,51 @@ const SignupPage = () => {
   };
   return (
     <Wrapper>
-      {completeRegister ? (
-        <CompleteRegisterWrapper>
-          Udało się założyć konto
-          <StyledLink to="/login">Zaloguj się</StyledLink>
-        </CompleteRegisterWrapper>
-      ) : (
-        <Form onSubmit={handleRegister}>
-          <LogoWrapper>
-            <Logo props />
-          </LogoWrapper>
-          <H3>Zarejestruj się</H3>
-          <input
-            id="username"
-            type="text"
-            pattern="[a-zA-Z0-9]+"
-            placeholder="nazwa użytkownika"
-            required
-            onChange={(e) => handleInput(e)}
-          />
-          {usernameError != '' ? (
-            <ErrorMessage>{usernameError}</ErrorMessage>
-          ) : null}
-          <input
-            id="email"
-            type="email"
-            placeholder="e-mail"
-            required
-            onChange={handleInput}
-          />
-          {emailError != '' ? <ErrorMessage>{emailError}</ErrorMessage> : null}
-          <input
-            id="password"
-            type="password"
-            pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
-            placeholder="hasło"
-            required
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <input
-            id="passwordConfirm"
-            type="password"
-            pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
-            placeholder="powtórz hasło"
-            required
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-          {passwordError != '' ? (
-            <ErrorMessage>{passwordError}</ErrorMessage>
-          ) : null}
-          <Button type="submit">Zarejestruj się</Button>
-        </Form>
-      )}
+      <Form onSubmit={handleRegister}>
+        <LogoWrapper>
+          <Logo props />
+        </LogoWrapper>
+        <H3>Zarejestruj się</H3>
+        <input
+          id="username"
+          type="text"
+          pattern="[a-zA-Z0-9]+"
+          placeholder="nazwa użytkownika"
+          required
+          onChange={(e) => handleInput(e)}
+        />
+        {usernameError != '' ? (
+          <ErrorMessage>{usernameError}</ErrorMessage>
+        ) : null}
+        <input
+          id="email"
+          type="email"
+          placeholder="e-mail"
+          required
+          onChange={handleInput}
+        />
+        {emailError != '' ? <ErrorMessage>{emailError}</ErrorMessage> : null}
+        <input
+          id="password"
+          type="password"
+          pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+          placeholder="hasło"
+          required
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <input
+          id="passwordConfirm"
+          type="password"
+          pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+          placeholder="powtórz hasło"
+          required
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
+        {passwordError != '' ? (
+          <ErrorMessage>{passwordError}</ErrorMessage>
+        ) : null}
+        <Button type="submit">Zarejestruj się</Button>
+      </Form>
     </Wrapper>
   );
 };
