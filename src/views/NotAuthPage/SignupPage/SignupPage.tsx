@@ -11,7 +11,6 @@ import {
   DocumentData,
   getDocs,
 } from '@firebase/firestore';
-import { Link } from 'react-router-dom';
 import Logo from 'components/atoms/Logo/Logo';
 
 const Wrapper = styled.div`

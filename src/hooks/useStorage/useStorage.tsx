@@ -3,20 +3,23 @@ import { storage } from 'firabase-config';
 import { ref, deleteObject } from 'firebase/storage';
 import useFirestore from 'hooks/useFirestore/useFirestore';
 import { uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { DocumentReference } from 'firebase/firestore';
 
 const useStorage = () => {
   const [storageLoading, setStorageLoading] = useState(false);
-  const { userDocRef, updateDocument } = useFirestore();
+  const { updateDocument } = useFirestore();
 
   const deleteFile = async (path: string) => {
     const desertRef = ref(storage, path);
     await deleteObject(desertRef);
-    updateDocument(userDocRef, {
-      profileImgPath: '',
-    });
   };
 
-  const uploadFile = async (path: string, fileUploaded: any) => {
+  const uploadFile = async (
+    path: string,
+    fileUploaded: any,
+    DocRef: DocumentReference,
+    key: string | null = null
+  ) => {
     const fileRef = ref(storage, path);
 
     const uploadTask = uploadBytesResumable(fileRef, fileUploaded);
@@ -41,12 +44,17 @@ const useStorage = () => {
         alert('Nie udało się przesłać pliku');
       },
       () => {
-        updateDocument(userDocRef, {
-          profileImgPath: path,
-        });
-        getDownloadURL(uploadTask.snapshot.ref).then(() => {
+        if (key) {
           setStorageLoading(false);
-        });
+          getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+            setStorageLoading(false);
+            updateDocument(DocRef, {
+              [key]: url,
+            });
+          });
+        } else {
+          setStorageLoading(false);
+        }
       }
     );
   };

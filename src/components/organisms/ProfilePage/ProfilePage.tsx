@@ -1,12 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import styled from 'styled-components';
-import { auth, storage } from 'firabase-config';
 import profilePlaceholder from 'assets/imgs/profilePlaceholder.svg';
-import { ref, getDownloadURL } from 'firebase/storage';
 import useFirestore from 'hooks/useFirestore/useFirestore';
 import useStorage from 'hooks/useStorage/useStorage';
 import { FaHeadphones } from 'react-icons/fa';
 import { BsUpload } from 'react-icons/bs';
+import PostItem from 'components/molecules/PostItem/PostItem';
+import { AuthContext } from 'context/AuthContext/AuthContext';
+import { DocumentData } from 'firebase/firestore';
 
 const Wrapper = styled.div`
   position: relative;
@@ -60,8 +61,7 @@ const InfoWrapper = styled.div`
 `;
 
 const PostWrapper = styled.div`
-  height: 505px;
-  padding-top: 200px;
+  background-color: ${({ theme }) => theme.colors.darkBlue};
 `;
 
 const NumberWrapper = styled.div`
@@ -108,16 +108,21 @@ const CategoryWrapper = styled.div`
 `;
 
 const ProfilePage: React.FC = () => {
-  const [profileImageUrl, setProfileImageUrl] = useState('');
+  const [posts, setPosts] = useState<DocumentData[]>([]);
   const {
     userData,
-    getData,
+    getDocument,
     firestoreLoading,
     userDocRef,
     setFirestoreLoading,
+    getQueryCollection,
+    updateDocument,
   } = useFirestore();
   const { deleteFile, uploadFile, storageLoading } = useStorage();
   const hiddenFileInput = useRef<any>(null);
+  const {
+    state: { uid },
+  } = useContext(AuthContext);
 
   const handleClick = () => {
     hiddenFileInput.current.click();
@@ -129,12 +134,14 @@ const ProfilePage: React.FC = () => {
     const uploadImage = async () => {
       if (userData) {
         if (fileUploaded == null) return;
-        if ('profileImgPath' in userData && userData.profileImgPath != '') {
-          setProfileImageUrl('');
-          deleteFile(userData.profileImgPath);
+        if ('profileImgUrl' in userData && userData.profileImgUrl != '') {
+          deleteFile(userData.profileImgUrl);
+          updateDocument(userDocRef, {
+            profileImgUrl: '',
+          });
         }
-        const imagePath = `artworks/${userData.id}/profileImage/${fileUploaded.name}`;
-        uploadFile(imagePath, fileUploaded);
+        const imagePath = `artworks/users/${userData.id}/profileImage/${fileUploaded.name}`;
+        uploadFile(imagePath, fileUploaded, userDocRef, 'profileImgUrl');
       }
     };
 
@@ -154,29 +161,18 @@ const ProfilePage: React.FC = () => {
   };
 
   useEffect(() => {
-
     if (firestoreLoading == true || storageLoading == true) {
-      getData(userDocRef);
+      getDocument(userDocRef);
+      getQueryCollection('posts', 'userId', '==', uid).then((querySnapshot) => {
+        setPosts([]);
+        querySnapshot.forEach((doc) => {
+          setPosts((prev) => [...prev, doc.data()]);
+        });
+      });
     } else {
       console.log(userData);
-      if (
-        userData &&
-        'profileImgPath' in userData &&
-        userData.profileImgPath != ''
-      ) {
-        const imageRef = ref(storage, userData.profileImgPath);
-
-        getDownloadURL(imageRef)
-          .then((url) => {
-            setProfileImageUrl(url);
-          })
-          .catch(() => {
-            console.log('wait...');
-            setFirestoreLoading(true);
-          });
-      }
     }
-  }, [profileImageUrl, uploadFile, firestoreLoading, storageLoading]);
+  }, [uploadFile, firestoreLoading, storageLoading]);
 
   return (
     <Wrapper>
@@ -184,7 +180,11 @@ const ProfilePage: React.FC = () => {
         <>
           <ImgWrapper>
             <ProfileImage
-              src={profileImageUrl != '' ? profileImageUrl : profilePlaceholder}
+              src={
+                userData.profileImgUrl != ''
+                  ? userData.profileImgUrl
+                  : profilePlaceholder
+              }
             />
             <UploadProfileButton onClick={handleClick}>
               <BsUpload />
@@ -211,7 +211,13 @@ const ProfilePage: React.FC = () => {
             </NumberWrapper>
             <DescriptionWrapper>{userData.description}</DescriptionWrapper>
           </InfoWrapper>
-          <PostWrapper></PostWrapper>
+          <PostWrapper>
+            {' '}
+            {}
+            {posts.length
+              ? posts.map((item: any) => <PostItem data={item} key={item.id} />)
+              : null}
+          </PostWrapper>
         </>
       ) : (
         <>
