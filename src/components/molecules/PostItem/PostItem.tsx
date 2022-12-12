@@ -1,7 +1,7 @@
 import { db } from 'firabase-config';
 import { doc, DocumentData } from 'firebase/firestore';
 import useFirestore from 'hooks/useFirestore/useFirestore';
-import React, { useEffect} from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import profilePlaceholder from 'assets/imgs/profilePlaceholder.svg';
 import { BsTrashFill } from 'react-icons/bs';
@@ -51,10 +51,24 @@ interface PostItemProps {
 }
 
 const PostItem: React.FC<PostItemProps> = ({ data }) => {
+  const [date, setDate] = useState('');
   const { userData, getDocument, firestoreLoading, DeleteDocument } =
     useFirestore();
   const { deleteFile } = useStorage();
   const DocRef = doc(db, 'users', data.userId);
+
+  const displayTimestamp = () => {
+    const date = new Date(data.timeStamp.seconds * 1000);
+    const dateString = date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: false,
+    });
+    setDate(dateString);
+  }
 
   const handleDelete = async (id: string) => {
     if (data.mediaUrl && data.mediaUrl != '') {
@@ -69,6 +83,7 @@ const PostItem: React.FC<PostItemProps> = ({ data }) => {
       getDocument(DocRef);
     } else {
       if (userData) {
+        displayTimestamp();
         console.log(data, userData);
       }
     }
@@ -100,6 +115,7 @@ const PostItem: React.FC<PostItemProps> = ({ data }) => {
         <br />
         tagi:
         {data.tags.map((item: string) => item + ' ')}
+        data: {date}
       </ContentWrapper>
     </Wrapper>
   );

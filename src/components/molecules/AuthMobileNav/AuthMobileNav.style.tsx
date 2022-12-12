@@ -1,13 +1,14 @@
-import React, { useContext, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { AuthContext } from 'context/AuthContext/AuthContext';
-import Logo from 'components/atoms/Logo/Logo';
 import { BsList } from 'react-icons/bs';
 import { Link, NavLink } from 'react-router-dom';
-import { signOut } from 'firebase/auth';
-import { auth } from 'firabase-config';
 
-const MenuButton = styled(BsList)`
+export const Wrapper = styled.div`
+  ${({ theme }) => theme.mq.desktop} {
+    display: none;
+  }
+`;
+
+export const MenuButton = styled(BsList)`
   position: fixed;
   top: 0;
   right: 0;
@@ -17,7 +18,7 @@ const MenuButton = styled(BsList)`
   border-radius: 20px 0px 0px 20px;
 `;
 
-const StyledLink = styled(NavLink)`
+export const StyledLink = styled(NavLink)`
   border: none;
   border-bottom: 3px solid ${({ theme }) => theme.colors.darkBlue};
   font-size: ${({ theme }) => theme.fontSize.l};
@@ -34,7 +35,7 @@ const StyledLink = styled(NavLink)`
   }
 `;
 
-const LogoutButton = styled(Link)`
+export const LogoutButton = styled(Link)`
   text-decoration: none;
   position: absolute;
   top: 10px;
@@ -47,32 +48,32 @@ const LogoutButton = styled(Link)`
 `;
 
 const slideLeft = keyframes`
-  from {
-    margin-left: 100%;
-    z-index: 2;
-  
-  }
+from {
+  margin-left: 100%;
+  z-index: 2;
 
-  to {
-    margin-left: 0px;
-    z-index: 2;
-  
-  }
+}
+
+to {
+  margin-left: 0px;
+  z-index: 2;
+
+}
 `;
 
 const slideRight = keyframes`
-  from {
-    margin-left: 0px;
-    z-index: 2;
-  }
+from {
+  margin-left: 0px;
+  z-index: 2;
+}
 
-  to {
-    margin-left: 100%;
-    z-index: 2;
-  }
+to {
+  margin-left: 100%;
+  z-index: 2;
+}
 `;
 
-const Nav = styled.div<{ isOpen: boolean }>`
+export const Nav = styled.div<{ isOpen: boolean }>`
   animation: ${(props) => (props.isOpen ? slideLeft : slideRight)} 1s;
   margin-left: ${(props) => (props.isOpen ? '0' : '100%')};
   display: flex;
@@ -101,7 +102,7 @@ const Nav = styled.div<{ isOpen: boolean }>`
   }
 `;
 
-const SearchInput = styled.input`
+export const SearchInput = styled.input`
   border: none;
   border-bottom: 3px solid ${({ theme }) => theme.colors.darkBlue};
   background-color: ${({ theme }) => theme.colors.grey};
@@ -116,60 +117,3 @@ const SearchInput = styled.input`
     outline: ${({ theme }) => theme.colors.darkBlue} solid 2px;
   }
 `;
-
-const AuthNav: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const { dispatch } = useContext(AuthContext);
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        dispatch({ type: 'LOGOUT' });
-      })
-      .catch((error) => {
-        // An error happened.
-      });
-  };
-
-  const openNav = () => {
-    setIsOpen(!isOpen);
-  };
-
-  return (
-    <>
-      <MenuButton onClick={openNav} />
-      <Nav isOpen={isOpen}>
-        <ul>
-          <li>
-            <Logo props />
-          </li>
-          <li>
-            <SearchInput type="text" placeholder="search" />
-          </li>
-          <li>
-            <StyledLink
-              onClick={openNav}
-              className={({ isActive }) => (isActive ? 'active' : undefined)}
-              to="/"
-            >
-              odkrywaj
-            </StyledLink>
-          </li>
-          <li>
-            <StyledLink
-              onClick={openNav}
-              to="/login"
-              className={({ isActive }) => (isActive ? 'active' : undefined)}
-            >
-              moje konto
-            </StyledLink>
-          </li>
-        </ul>
-        <LogoutButton to="/login" onClick={handleLogout}>
-          wyloguj się
-        </LogoutButton>
-      </Nav>
-    </>
-  );
-};
-
-export default AuthNav;

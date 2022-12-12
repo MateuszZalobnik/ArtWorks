@@ -1,7 +1,7 @@
 import React from 'react';
 import ProfilePage from 'components/organisms/ProfilePage/ProfilePage';
-import { Route, Routes } from 'react-router-dom';
-import AuthNav from 'components/molecules/AuthNav/AuthNav';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import AuthNav from 'components/molecules/AuthMobileNav/AuthMobileNav';
 import styled from 'styled-components';
 import HomePage from 'components/organisms/HomePage/HomePage';
 import AddNewPost from 'components/molecules/AddNewPost/AddNewPost';
@@ -14,7 +14,7 @@ const AuthPage: React.FC = () => {
       <AuthNav />
       <Routes>
         <Route
-          path="/"
+          path="/auth"
           element={
             <>
               <HomePage />
@@ -22,7 +22,7 @@ const AuthPage: React.FC = () => {
           }
         />
         <Route
-          path="/add"
+          path="/auth/add"
           element={
             <>
               <AddNewPost />
@@ -30,13 +30,14 @@ const AuthPage: React.FC = () => {
           }
         />
         <Route
-          path="/login"
+          path="/auth/login"
           element={
             <>
               <ProfilePage />
             </>
           }
         />
+        <Route path="/" element={<Navigate replace to="/auth" />} />
       </Routes>
     </Wrapper>
   );

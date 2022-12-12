@@ -5,6 +5,7 @@ import useStorage from 'hooks/useStorage/useStorage';
 import React, { useEffect, useState, useRef, useContext } from 'react';
 import { BsUpload } from 'react-icons/bs';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const Wrapper = styled.div`
   display: flex;
@@ -92,6 +93,7 @@ const AddNewPost: React.FC = () => {
     state: { uid },
   } = useContext(AuthContext);
   const { uploadFile } = useStorage();
+  const navigate = useNavigate();
 
   const handleChange = (event: any) => {
     const file = event.target.files[0];
@@ -129,6 +131,7 @@ const AddNewPost: React.FC = () => {
     if (addPost) {
       setError(null);
       addNewPost();
+      navigate('/auth');
     } else {
       setError('Dodaj opis');
     }

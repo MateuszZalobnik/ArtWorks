@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { auth } from 'firabase-config';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { AuthContext } from 'context/AuthContext/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Logo from 'components/atoms/Logo/Logo';
 
 const Wrapper = styled.div`
@@ -92,7 +92,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-
+  const navigate = useNavigate();
   const { dispatch } = useContext(AuthContext);
 
   const handleLogin = (e: React.FormEvent) => {
@@ -103,6 +103,7 @@ const LoginPage = () => {
         const user = userCredential.user;
         setError('');
         dispatch({ type: 'LOGIN', payload: user });
+        navigate('/auth');
       })
       .catch(() => {
         setError('Zły e-mail lub hasło');

@@ -8,6 +8,7 @@ import { BsUpload } from 'react-icons/bs';
 import PostItem from 'components/molecules/PostItem/PostItem';
 import { AuthContext } from 'context/AuthContext/AuthContext';
 import { DocumentData } from 'firebase/firestore';
+import AddNewPostButton from 'components/atoms/AddNewPostButton/AddNewPostButton';
 
 const Wrapper = styled.div`
   position: relative;
@@ -181,7 +182,7 @@ const ProfilePage: React.FC = () => {
           <ImgWrapper>
             <ProfileImage
               src={
-                userData.profileImgUrl != ''
+                userData.profileImgUrl && userData.profileImgUrl != ''
                   ? userData.profileImgUrl
                   : profilePlaceholder
               }
@@ -212,8 +213,7 @@ const ProfilePage: React.FC = () => {
             <DescriptionWrapper>{userData.description}</DescriptionWrapper>
           </InfoWrapper>
           <PostWrapper>
-            {' '}
-            {}
+            <AddNewPostButton />
             {posts.length
               ? posts.map((item: any) => <PostItem data={item} key={item.id} />)
               : null}

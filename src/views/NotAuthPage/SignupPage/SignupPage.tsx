@@ -12,6 +12,8 @@ import {
   getDocs,
 } from '@firebase/firestore';
 import Logo from 'components/atoms/Logo/Logo';
+import * as EmailValidator from 'email-validator';
+import { useNavigate } from 'react-router-dom';
 
 const Wrapper = styled.div`
   display: flex;
@@ -94,7 +96,7 @@ const SignupPage = () => {
   const [passwordError, setPasswordError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [usernameError, setUsernameError] = useState('');
-
+  const navigate = useNavigate();
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -105,10 +107,12 @@ const SignupPage = () => {
     let correctData: boolean;
     correctData = true;
 
+    //check username length
     if (userData.username.length < 3 || userData.username.length >= 20) {
       correctData = false;
       setUsernameError('Nazwa użytkownika powinna mieć od 3 do 20 znaków');
     }
+    //check passwords
     if (password != confirmPassword) {
       correctData = false;
       setPasswordError('Hasła nie są identyczne');
@@ -117,6 +121,7 @@ const SignupPage = () => {
       setPasswordError('Hasło musi mieć 8 znaków lub więcej');
     }
 
+    //check existing username and email
     if (correctData == true) {
       try {
         const usersRef = collection(db, 'users');
@@ -148,6 +153,13 @@ const SignupPage = () => {
         console.log(err);
       }
     }
+    //email validation
+    if (correctData == true) {
+      if (EmailValidator.validate(userData.email) == false) {
+        setEmailError('Niepoprawny email');
+        correctData = false;
+      }
+    }
 
     if (correctData == true) {
       setEmailError('');
@@ -170,6 +182,7 @@ const SignupPage = () => {
           numberOfViews: ['fews3232f2dasf1', 'admk3d2', 'fwescsdsqc'],
           numberOfFollows: ['fews3232f2dasf1', 'admk3d2'],
         });
+        navigate('/auth');
       } catch (err) {
         console.log(err);
       }

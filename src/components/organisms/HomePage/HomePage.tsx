@@ -2,9 +2,8 @@ import PostItem from 'components/molecules/PostItem/PostItem';
 import useFirestore from 'hooks/useFirestore/useFirestore';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { BsPlusCircle } from 'react-icons/bs';
-import { Link } from 'react-router-dom';
 import { DocumentData } from 'firebase/firestore';
+import AddNewPostButton from 'components/atoms/AddNewPostButton/AddNewPostButton';
 
 const Wrapper = styled.div`
   display: flex;
@@ -16,12 +15,7 @@ const Wrapper = styled.div`
 
 const PostWrapper = styled.div``;
 
-const LinkNewPost = styled(Link)`
-  font-size: ${({ theme }) => theme.fontSize.xxl};
-  color: ${({ theme }) => theme.colors.white};
-  margin-top: 50px;
-  cursor: pointer;
-`;
+
 
 const HomePage: React.FC = () => {
   const [posts, setPosts] = useState<DocumentData[]>([]);
@@ -44,9 +38,7 @@ const HomePage: React.FC = () => {
 
   return (
     <Wrapper>
-      <LinkNewPost to="/add">
-        <BsPlusCircle />
-      </LinkNewPost>
+      <AddNewPostButton />
       <PostWrapper>
         {posts.length
           ? posts.map((item) => <PostItem data={item} key={item.id} />)
