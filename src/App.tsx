@@ -12,6 +12,7 @@ const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.darkBlue};
   min-height: 100vh;
   width: 100%;
+  
 `;
 
 const App = () => {

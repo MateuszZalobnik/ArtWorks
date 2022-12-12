@@ -19,6 +19,15 @@ const Wrapper = styled.div`
   color: ${({ theme }) => theme.colors.darkBlue};
 `;
 
+const UserWrapper = styled.div`
+  ${({ theme }) => theme.mq.desktop} {
+    width: 25%;
+    position: absolute;
+    top: 10vh;
+    left: 5%;
+  }
+`;
+
 const ImgWrapper = styled.div`
   width: 100%;
   position: relative;
@@ -40,13 +49,26 @@ const Username = styled.div`
   width: 70%;
   font-size: ${({ theme }) => theme.fontSize.l};
   font-weight: 700;
+  ${({ theme }) => theme.mq.desktop} {
+    padding-left: 0px;
+    justify-content: center;
+    width: 100%;
+  }
 `;
 
 const UploadProfileButton = styled.div`
-  font-size: ${({ theme }) => theme.fontSize.xxl};
+  font-size: ${({ theme }) => theme.fontSize.l};
   position: absolute;
-  left: 0;
-  bottom: 0;
+  left: 10px;
+  bottom: 10px;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 5px;
+  background-color: ${({ theme }) => theme.colors.white};
+  opacity: 0.4;
+  :hover {
+    opacity: 1;
+  }
 `;
 
 const InfoWrapper = styled.div`
@@ -54,15 +76,30 @@ const InfoWrapper = styled.div`
   flex-direction: column;
   color: ${({ theme }) => theme.colors.darkBlue};
   background-color: ${({ theme }) => theme.colors.white};
-  background: linear-gradient(
-    ${({ theme }) => theme.colors.white} 50%,
-    ${({ theme }) => theme.colors.darkBlue}
-  );
-  padding-bottom: 200px;
+  padding-bottom: 20px;
+
+  ${({ theme }) => theme.mq.desktop} {
+    padding-top: 50px;
+  }
 `;
 
 const PostWrapper = styled.div`
-  background-color: ${({ theme }) => theme.colors.darkBlue};
+  background: linear-gradient(
+    to bottom,
+    ${({ theme }) => theme.colors.white},
+    ${({ theme }) => theme.colors.darkBlue} 100px
+  );
+  padding-top: 100px;
+
+  ${({ theme }) => theme.mq.desktop} {
+    background: ${({ theme }) => theme.colors.darkBlue};
+    width: 70%;
+    margin-left: 30%;
+    padding-top: 10px;
+    margin-top: 2vh;
+    height: 63vh;
+    overflow: auto;
+  }
 `;
 
 const NumberWrapper = styled.div`
@@ -106,6 +143,23 @@ const CategoryWrapper = styled.div`
   border-bottom: 4px solid ${({ theme }) => theme.colors.darkBlue};
   border-left: 2px solid ${({ theme }) => theme.colors.darkBlue};
   border-right: 2px solid ${({ theme }) => theme.colors.darkBlue};
+
+  ${({ theme }) => theme.mq.desktop} {
+    left: 50%;
+    transform: translate(-50%);
+  }
+`;
+
+const BackgroundImg = styled.img`
+  height: 35vh;
+  width: 100%;
+  object-fit: cover;
+  filter: blur(1px);
+  -webkit-filter: blur(1px);
+  display: none;
+  ${({ theme }) => theme.mq.desktop} {
+    display: block;
+  }
 `;
 
 const ProfilePage: React.FC = () => {
@@ -179,39 +233,48 @@ const ProfilePage: React.FC = () => {
     <Wrapper>
       {userData ? (
         <>
-          <ImgWrapper>
-            <ProfileImage
-              src={
-                userData.profileImgUrl && userData.profileImgUrl != ''
-                  ? userData.profileImgUrl
-                  : profilePlaceholder
-              }
-            />
-            <UploadProfileButton onClick={handleClick}>
-              <BsUpload />
-            </UploadProfileButton>
-            <input
-              type="file"
-              ref={hiddenFileInput}
-              onChange={handleChange}
-              style={{ display: 'none' }}
-            />
-            <CategoryWrapper>{CategoryView()}</CategoryWrapper>
-          </ImgWrapper>
-          <InfoWrapper>
-            <Username>{userData.username}</Username>
-            <NumberWrapper>
-              <Number>
-                {userData.numberOfViews.length}
-                <span>views</span>
-              </Number>
-              <Number>
-                {userData.numberOfFollows.length}
-                <span>follows</span>
-              </Number>
-            </NumberWrapper>
-            <DescriptionWrapper>{userData.description}</DescriptionWrapper>
-          </InfoWrapper>
+          <BackgroundImg
+            src={
+              userData.profileImgUrl && userData.profileImgUrl != ''
+                ? userData.profileImgUrl
+                : profilePlaceholder
+            }
+          />
+          <UserWrapper>
+            <ImgWrapper>
+              <ProfileImage
+                src={
+                  userData.profileImgUrl && userData.profileImgUrl != ''
+                    ? userData.profileImgUrl
+                    : profilePlaceholder
+                }
+              />
+              <UploadProfileButton onClick={handleClick}>
+                <BsUpload />
+              </UploadProfileButton>
+              <input
+                type="file"
+                ref={hiddenFileInput}
+                onChange={handleChange}
+                style={{ display: 'none' }}
+              />
+              <CategoryWrapper>{CategoryView()}</CategoryWrapper>
+            </ImgWrapper>
+            <InfoWrapper>
+              <Username>{userData.username}</Username>
+              <NumberWrapper>
+                <Number>
+                  {userData.numberOfViews.length}
+                  <span>views</span>
+                </Number>
+                <Number>
+                  {userData.numberOfFollows.length}
+                  <span>follows</span>
+                </Number>
+              </NumberWrapper>
+              <DescriptionWrapper>{userData.description}</DescriptionWrapper>
+            </InfoWrapper>
+          </UserWrapper>
           <PostWrapper>
             <AddNewPostButton />
             {posts.length
@@ -220,12 +283,12 @@ const ProfilePage: React.FC = () => {
           </PostWrapper>
         </>
       ) : (
-        <>
+        <UserWrapper>
           <ImgWrapper>
             <ProfileImage src={profilePlaceholder} />
           </ImgWrapper>
           <Username>wait</Username>
-        </>
+        </UserWrapper>
       )}
     </Wrapper>
   );

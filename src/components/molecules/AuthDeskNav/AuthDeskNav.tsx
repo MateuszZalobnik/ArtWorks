@@ -5,15 +5,13 @@ import { signOut } from 'firebase/auth';
 import { auth } from 'firabase-config';
 import {
   LogoutButton,
-  MenuButton,
   Nav,
   SearchInput,
   StyledLink,
   Wrapper,
-} from './AuthMobileNav.style';
+} from './AuthDeskNav.style';
 
-const AuthMobileNav: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const AuthDeskNav: React.FC = () => {
   const { dispatch } = useContext(AuthContext);
   const handleLogout = () => {
     signOut(auth)
@@ -25,14 +23,9 @@ const AuthMobileNav: React.FC = () => {
       });
   };
 
-  const openNav = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
     <Wrapper>
-      <MenuButton onClick={openNav} />
-      <Nav isOpen={isOpen}>
+      <Nav>
         <ul>
           <li>
             <Logo props />
@@ -42,7 +35,6 @@ const AuthMobileNav: React.FC = () => {
           </li>
           <li>
             <StyledLink
-              onClick={openNav}
               className={({ isActive }) => (isActive ? 'active' : undefined)}
               to="/auth"
               end
@@ -52,7 +44,6 @@ const AuthMobileNav: React.FC = () => {
           </li>
           <li>
             <StyledLink
-              onClick={openNav}
               to="/auth/login"
               className={({ isActive }) => (isActive ? 'active' : undefined)}
             >
@@ -68,4 +59,4 @@ const AuthMobileNav: React.FC = () => {
   );
 };
 
-export default AuthMobileNav;
+export default AuthDeskNav;
