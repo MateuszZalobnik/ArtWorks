@@ -38,6 +38,7 @@ const ImgWrapper = styled.div`
 `;
 
 const ProfileImage = styled.img`
+  background-color: ${({ theme }) => theme.colors.grey};
   height: 35vh;
   object-fit: cover;
 `;
@@ -151,6 +152,7 @@ const CategoryWrapper = styled.div`
 `;
 
 const BackgroundImg = styled.img`
+  background-color: ${({ theme }) => theme.colors.blue};
   height: 35vh;
   width: 100%;
   object-fit: cover;
@@ -160,6 +162,11 @@ const BackgroundImg = styled.img`
   ${({ theme }) => theme.mq.desktop} {
     display: block;
   }
+`;
+
+const PostInfo = styled.div`
+  color: ${({ theme }) => theme.colors.white};
+  font-size: ${({ theme }) => theme.fontSize.l};
 `;
 
 const ProfilePage: React.FC = () => {
@@ -224,8 +231,6 @@ const ProfilePage: React.FC = () => {
           setPosts((prev) => [...prev, doc.data()]);
         });
       });
-    } else {
-      console.log(userData);
     }
   }, [uploadFile, firestoreLoading, storageLoading]);
 
@@ -233,13 +238,12 @@ const ProfilePage: React.FC = () => {
     <Wrapper>
       {userData ? (
         <>
-          <BackgroundImg
-            src={
-              userData.profileImgUrl && userData.profileImgUrl != ''
-                ? userData.profileImgUrl
-                : profilePlaceholder
-            }
-          />
+          <BackgroundImg>
+            {userData.profileImgUrl && userData.profileImgUrl != '' ? (
+              <img src={userData.profileImgUrl} />
+            ) : null}
+          </BackgroundImg>
+
           <UserWrapper>
             <ImgWrapper>
               <ProfileImage
@@ -277,9 +281,11 @@ const ProfilePage: React.FC = () => {
           </UserWrapper>
           <PostWrapper>
             <AddNewPostButton />
-            {posts.length
-              ? posts.map((item: any) => <PostItem data={item} key={item.id} />)
-              : null}
+            {posts.length ? (
+              posts.map((item: any) => <PostItem data={item} key={item.id} />)
+            ) : (
+              <PostInfo>Jeszcze nie masz żadnych postów</PostInfo>
+            )}
           </PostWrapper>
         </>
       ) : (
@@ -287,7 +293,6 @@ const ProfilePage: React.FC = () => {
           <ImgWrapper>
             <ProfileImage src={profilePlaceholder} />
           </ImgWrapper>
-          <Username>wait</Username>
         </UserWrapper>
       )}
     </Wrapper>

@@ -45,11 +45,11 @@ const useStorage = () => {
       },
       () => {
         if (key) {
-          setStorageLoading(false);
           getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-            setStorageLoading(false);
             updateDocument(DocRef, {
               [key]: url,
+            }).then(() => {
+              setStorageLoading(false);
             });
           });
         } else {

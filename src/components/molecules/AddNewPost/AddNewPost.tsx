@@ -68,6 +68,7 @@ const UploadStyled = styled(BsUpload)`
   width: 100%;
   margin-top: 20px;
   text-align: center;
+  cursor: pointer;
 `;
 
 const ErrorMessage = styled.div`
@@ -88,11 +89,12 @@ const AddNewPost: React.FC = () => {
   });
   const [error, setError] = useState<string | null>(null);
   const [fileUploaded, setFileUploaded] = useState<any>(null);
+  const [reload, setReload] = useState(false);
   const hiddenFileInput = useRef<any>(null);
   const {
     state: { uid },
   } = useContext(AuthContext);
-  const { uploadFile } = useStorage();
+  const { uploadFile, storageLoading } = useStorage();
   const navigate = useNavigate();
 
   const handleChange = (event: any) => {
@@ -113,7 +115,6 @@ const AddNewPost: React.FC = () => {
         userId: uid,
         timeStamp: timeStamp,
       });
-      console.log('Document written with ID: ', docRef.id);
 
       await updateDoc(docRef, {
         id: docRef.id,
@@ -130,8 +131,9 @@ const AddNewPost: React.FC = () => {
     }
     if (addPost) {
       setError(null);
-      addNewPost();
-      navigate('/auth');
+      addNewPost().then(() => {
+        setReload(true);
+      });
     } else {
       setError('Dodaj opis');
     }
@@ -152,6 +154,15 @@ const AddNewPost: React.FC = () => {
   const handleClick = () => {
     hiddenFileInput.current.click();
   };
+
+  useEffect(() => {
+    if (
+      (storageLoading == false && fileUploaded != null) ||
+      (fileUploaded == null && reload == true)
+    ) {
+      navigate('/auth');
+    }
+  }, [storageLoading, reload]);
 
   return (
     <Wrapper>

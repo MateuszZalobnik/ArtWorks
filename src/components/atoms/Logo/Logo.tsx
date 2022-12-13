@@ -10,6 +10,7 @@ const LogoWrapper = styled(Link)`
   display: flex;
   justify-content: center;
   flex-direction: row;
+  cursor: pointer;
 `;
 
 const LeftSide = styled.div`
