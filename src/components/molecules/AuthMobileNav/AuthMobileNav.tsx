@@ -20,7 +20,7 @@ const AuthMobileNav: React.FC = () => {
       .then(() => {
         dispatch({ type: 'LOGOUT' });
       })
-      .catch((error) => {
+      .catch(() => {
         // An error happened.
       });
   };
@@ -53,7 +53,7 @@ const AuthMobileNav: React.FC = () => {
           <li>
             <StyledLink
               onClick={openNav}
-              to="/auth/login"
+              to="/auth/myaccount"
               className={({ isActive }) => (isActive ? 'active' : undefined)}
             >
               moje konto

@@ -15,8 +15,6 @@ const Wrapper = styled.div`
 
 const PostWrapper = styled.div``;
 
-
-
 const HomePage: React.FC = () => {
   const [posts, setPosts] = useState<DocumentData[]>([]);
 
@@ -31,8 +29,6 @@ const HomePage: React.FC = () => {
         });
       });
       getAllCollection('posts');
-    } else {
-      //   console.log(collectionData);
     }
   }, [firestoreLoading]);
 

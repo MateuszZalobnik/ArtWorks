@@ -18,6 +18,8 @@
 .env.test.local
 .env.production.local
 .env
+notes
+.prettierrc
 
 npm-debug.log*
 yarn-debug.log*

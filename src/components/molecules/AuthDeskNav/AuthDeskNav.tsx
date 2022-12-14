@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { AuthContext } from 'context/AuthContext/AuthContext';
 import Logo from 'components/atoms/Logo/Logo';
 import { signOut } from 'firebase/auth';
@@ -18,7 +18,7 @@ const AuthDeskNav: React.FC = () => {
       .then(() => {
         dispatch({ type: 'LOGOUT' });
       })
-      .catch((error) => {
+      .catch(() => {
         // An error happened.
       });
   };
@@ -44,7 +44,7 @@ const AuthDeskNav: React.FC = () => {
           </li>
           <li>
             <StyledLink
-              to="/auth/login"
+              to="/auth/myaccount"
               className={({ isActive }) => (isActive ? 'active' : undefined)}
             >
               moje konto

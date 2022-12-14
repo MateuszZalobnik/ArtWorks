@@ -39,7 +39,7 @@ const AuthPage: React.FC = () => {
             }
           />
           <Route
-            path="/auth/login"
+            path="/auth/myaccount"
             element={
               <>
                 <ProfilePage />

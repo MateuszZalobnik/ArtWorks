@@ -1,8 +1,8 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import StartPage from 'components/organisms/StartPage/StartPage';
-import LoginPage from 'views/NotAuthPage/LoginPage/LoginPage';
-import SignupPage from 'views/NotAuthPage/SignupPage/SignupPage';
+import LoginPage from 'components/organisms/LoginPage/LoginPage';
+import SignupPage from 'components/organisms/SignupPage/SignupPage';
 
 const NotAuthPage: React.FC = () => {
   return (

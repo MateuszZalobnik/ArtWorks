@@ -2,75 +2,17 @@ import { db } from 'firabase-config';
 import { doc, DocumentData } from 'firebase/firestore';
 import useFirestore from 'hooks/useFirestore/useFirestore';
 import React, { useEffect, useState, useContext } from 'react';
-import styled from 'styled-components';
 import profilePlaceholder from 'assets/imgs/profilePlaceholder.svg';
 import { BsTrashFill } from 'react-icons/bs';
 import useStorage from 'hooks/useStorage/useStorage';
 import { AuthContext } from 'context/AuthContext/AuthContext';
-
-const Wrapper = styled.div`
-  position: relative;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-  width: 90%;
-  margin: 50px auto;
-  color: ${({ theme }) => theme.colors.darkBlue};
-  background-color: ${({ theme }) => theme.colors.white};
-  border-radius: ${({ theme }) => theme.borderRadius.s};
-`;
-
-const UserInfo = styled.div`
-  border-radius: ${({ theme }) => theme.borderRadius.s};
-  color: ${({ theme }) => theme.colors.white};
-  background-color: ${({ theme }) => theme.colors.darkBlue};
-  margin: 10px;
-  font-size: ${({ theme }) => theme.fontSize.m};
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px;
-  img {
-    background-color: ${({ theme }) => theme.colors.blue};
-    width: 70px;
-    height: 70px;
-    object-fit: cover;
-    border: 3px solid ${({ theme }) => theme.colors.white};
-    border-radius: 50%;
-  }
-`;
-
-const ContentWrapper = styled.div`
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  img {
-    margin-top: 20px;
-    width: 100%;
-    border-radius: ${({ theme }) => theme.borderRadius.s};
-    object-fit: contain;
-  }
-`;
-
-const DeleteButton = styled.div`
-  position: absolute;
-  left: 0;
-  top: -30px;
-  background-color: ${({ theme }) => theme.colors.white};
-  font-size: ${({ theme }) => theme.fontSize.xl};
-  color: ${({ theme }) => theme.colors.darkBlue};
-  border-radius: ${({ theme }) => theme.borderRadius.s};
-  cursor: pointer;
-`;
-
-const DateWrapper = styled.div`
-  display: flex;
-  justify-content: end;
-  color: ${({ theme }) => theme.colors.darkBlue};
-`;
+import {
+  ContentWrapper,
+  DateWrapper,
+  DeleteButton,
+  UserInfo,
+  Wrapper,
+} from './PostItem.style';
 
 interface PostItemProps {
   data: DocumentData;

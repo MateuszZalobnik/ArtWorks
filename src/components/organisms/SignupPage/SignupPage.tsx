@@ -176,13 +176,12 @@ const SignupPage = () => {
         await setDoc(userRef, {
           ...userData,
           id: res.user.uid,
-          category: 'music',
-          description:
-            'Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.',
+          category: '',
+          description: '',
           numberOfViews: ['fews3232f2dasf1', 'admk3d2', 'fwescsdsqc'],
           numberOfFollows: ['fews3232f2dasf1', 'admk3d2'],
         });
-        navigate('/auth');
+        navigate('/auth/myaccount');
       } catch (err) {
         console.log(err);
       }
