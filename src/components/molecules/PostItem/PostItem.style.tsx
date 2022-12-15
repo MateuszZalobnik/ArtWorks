@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
@@ -47,6 +48,12 @@ export const ContentWrapper = styled.div`
   }
 `;
 
+export const DescriptionWrapper = styled.div`
+  padding: 20px;
+  flex-wrap: wrap;
+  word-wrap: break-word;
+`;
+
 export const DeleteButton = styled.div`
   position: absolute;
   left: 0;
@@ -63,3 +70,8 @@ export const DateWrapper = styled.div`
   justify-content: end;
   color: ${({ theme }) => theme.colors.darkBlue};
 `;
+
+export const StyledLink = styled(Link)`
+text-decoration: none;
+color: ${({ theme }) => theme.colors.white};
+`

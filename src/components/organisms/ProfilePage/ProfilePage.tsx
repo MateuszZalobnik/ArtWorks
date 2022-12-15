@@ -3,16 +3,24 @@ import profilePlaceholder from 'assets/imgs/profilePlaceholder.svg';
 import useFirestore from 'hooks/useFirestore/useFirestore';
 import useStorage from 'hooks/useStorage/useStorage';
 import { FaHeadphones } from 'react-icons/fa';
-import { BsUpload } from 'react-icons/bs';
+import {
+  BsUpload,
+  BsPencilSquare,
+  BsCameraFill,
+  BsFilm,
+  BsPaletteFill,
+  BsPlusLg,
+} from 'react-icons/bs';
 import PostItem from 'components/molecules/PostItem/PostItem';
 import { AuthContext } from 'context/AuthContext/AuthContext';
-import { DocumentData } from 'firebase/firestore';
+import { DocumentData, DocumentReference } from 'firebase/firestore';
 import AddNewPostButton from 'components/atoms/AddNewPostButton/AddNewPostButton';
 import {
   BackgroundImg,
   BackgroundImgWrapper,
   CategoryWrapper,
   DescriptionWrapper,
+  EditUserInfoWrapper,
   ImgWrapper,
   InfoWrapper,
   Number,
@@ -20,19 +28,25 @@ import {
   PostInfo,
   PostWrapper,
   ProfileImage,
+  StyledCloseButton,
   UploadProfileButton,
   Username,
   UserWrapper,
   Wrapper,
 } from './ProfilePage.style';
+import EditUserInfo from 'components/molecules/EditUserInfo/EditUserInfo';
+import { useParams } from 'react-router-dom';
 
-const ProfilePage: React.FC = () => {
+const ProfilePage: React.FC<{ userDocRef: DocumentReference }> = ({
+  userDocRef,
+}) => {
+  const { username } = useParams();
+  const [isOpenEditWindow, setIsOpenEditWindow] = useState(false);
   const [posts, setPosts] = useState<DocumentData[]>([]);
   const {
     userData,
     getDocument,
     firestoreLoading,
-    userDocRef,
     getQueryCollection,
     updateDocument,
   } = useFirestore();
@@ -72,6 +86,19 @@ const ProfilePage: React.FC = () => {
         case 'music':
           return <FaHeadphones />;
           break;
+        case 'photo':
+          return <BsCameraFill />;
+          break;
+        case 'movie':
+          return <BsFilm />;
+          break;
+        case 'painting':
+          return <BsPaletteFill />;
+          break;
+        case 'other':
+          return <BsPlusLg />;
+          break;
+
         default:
           break;
       }
@@ -79,6 +106,7 @@ const ProfilePage: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log(username);
     if (firestoreLoading == true || storageLoading == true) {
       getDocument(userDocRef);
       getQueryCollection('posts', 'userId', '==', uid).then((querySnapshot) => {
@@ -94,6 +122,21 @@ const ProfilePage: React.FC = () => {
     <Wrapper>
       {userData ? (
         <>
+          {isOpenEditWindow ? (
+            <EditUserInfoWrapper>
+              <StyledCloseButton
+                onClick={() => {
+                  setIsOpenEditWindow(false);
+                }}
+              />
+              <EditUserInfo
+                userDocRef={userDocRef}
+                username={userData.username}
+                description={userData.description}
+                category={userData.category}
+              />
+            </EditUserInfoWrapper>
+          ) : null}
           <BackgroundImgWrapper>
             {userData.profileImgUrl && userData.profileImgUrl != '' ? (
               <BackgroundImg src={userData.profileImgUrl} />
@@ -118,10 +161,19 @@ const ProfilePage: React.FC = () => {
                 onChange={handleChange}
                 style={{ display: 'none' }}
               />
-              <CategoryWrapper>{CategoryView()}</CategoryWrapper>
+              {userData.category != '' ? (
+                <CategoryWrapper>{CategoryView()}</CategoryWrapper>
+              ) : null}
             </ImgWrapper>
             <InfoWrapper>
-              <Username>{userData.username}</Username>
+              <Username>
+                <BsPencilSquare
+                  onClick={() => {
+                    setIsOpenEditWindow(true);
+                  }}
+                />
+                {userData.username}
+              </Username>
               <NumberWrapper>
                 <Number>
                   {userData.numberOfViews.length}

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { BsXCircleFill } from 'react-icons/bs';
 
 export const Wrapper = styled.div`
   position: relative;
@@ -162,4 +163,24 @@ export const BackgroundImgWrapper = styled.div`
 export const PostInfo = styled.div`
   color: ${({ theme }) => theme.colors.white};
   font-size: ${({ theme }) => theme.fontSize.l};
+`;
+
+export const StyledCloseButton = styled(BsXCircleFill)`
+  position: absolute;
+  top: 22vh;
+  z-index: 1001;
+  cursor: pointer;
+`;
+
+export const EditUserInfoWrapper = styled.div`
+  position: absolute;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  top: 0;
+  background: rgba(255, 255, 255, 0.5);
+  height: 100vh;
+  width: 100%;
+  z-index: 1000;
+  font-size: ${({ theme }) => theme.fontSize.xxl};
 `;

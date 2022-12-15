@@ -10,6 +10,8 @@ import {
   ContentWrapper,
   DateWrapper,
   DeleteButton,
+  DescriptionWrapper,
+  StyledLink,
   UserInfo,
   Wrapper,
 } from './PostItem.style';
@@ -20,7 +22,7 @@ interface PostItemProps {
 
 const PostItem: React.FC<PostItemProps> = ({ data }) => {
   const [date, setDate] = useState('');
-  const { userData, getDocument, firestoreLoading, DeleteDocument } =
+  const { userData, getDocument, firestoreLoading, deleteDocument } =
     useFirestore();
   const { deleteFile } = useStorage();
   const DocRef = doc(db, 'users', data.userId);
@@ -46,7 +48,7 @@ const PostItem: React.FC<PostItemProps> = ({ data }) => {
       const filePath = data.mediaUrl;
       deleteFile(filePath);
     }
-    DeleteDocument('posts', id);
+    deleteDocument('posts', id);
   };
 
   useEffect(() => {
@@ -69,21 +71,23 @@ const PostItem: React.FC<PostItemProps> = ({ data }) => {
               <BsTrashFill />
             </DeleteButton>
           ) : null}
-          <UserInfo>
-            <img
-              src={
-                userData.profileImgUrl && userData.profileImgUrl != ''
-                  ? userData.profileImgUrl
-                  : profilePlaceholder
-              }
-            />
-            {userData.username}
-            <div>{userData.category}</div>
-          </UserInfo>
+          <StyledLink to={userData.username}>
+            <UserInfo>
+              <img
+                src={
+                  userData.profileImgUrl && userData.profileImgUrl != ''
+                    ? userData.profileImgUrl
+                    : profilePlaceholder
+                }
+              />
+              {userData.username}
+              <div>{userData.category}</div>
+            </UserInfo>
+          </StyledLink>
         </>
       ) : null}
       <ContentWrapper>
-        {data.description}
+        <DescriptionWrapper>{data.description}</DescriptionWrapper>
         {data.mediaUrl ? <img src={data.mediaUrl} /> : null}
       </ContentWrapper>
     </Wrapper>

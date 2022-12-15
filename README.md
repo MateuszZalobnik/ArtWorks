@@ -12,14 +12,15 @@ React Router Dom
 
 ## Project Roadmap
 
-- [x] creating account (data validation)
+- [x] creating account
+- [x] profile managment(description, category, profile photo, changing username)
 - [x] Mobile friendly
 - [x] removing posts
 - [x] posting photos
 - [ ] posting movies
 - [ ] posting music
 - [ ] english version
-- [ ] log in with username or email
+- [ ] log in with username and password
 - [ ] password recovery
 - [ ] following and views from verifed accounts
 - [ ] logging in with a google account

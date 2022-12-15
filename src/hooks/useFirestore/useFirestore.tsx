@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import {
   doc,
   getDoc,
@@ -14,16 +14,10 @@ import {
   deleteDoc,
 } from 'firebase/firestore';
 import { db } from 'firabase-config';
-import { AuthContext } from 'context/AuthContext/AuthContext';
 
 const useFirestore = () => {
   const [userData, setUserData] = useState<DocumentData>();
   const [firestoreLoading, setFirestoreLoading] = useState(true);
-  const {
-    state: { uid },
-  } = useContext(AuthContext);
-
-  const userDocRef = doc(db, 'users', uid);
 
   const getDocument = async (DocRef: DocumentReference<DocumentData>) => {
     try {
@@ -69,7 +63,7 @@ const useFirestore = () => {
     return querySnapshot;
   };
 
-  const DeleteDocument = async (collectionName: string, docName: string) => {
+  const deleteDocument = async (collectionName: string, docName: string) => {
     await deleteDoc(doc(db, collectionName, docName));
   };
 
@@ -78,11 +72,10 @@ const useFirestore = () => {
     userData,
     firestoreLoading,
     setFirestoreLoading,
-    userDocRef,
     updateDocument,
     getAllCollection,
     getQueryCollection,
-    DeleteDocument,
+    deleteDocument,
   };
 };
 
