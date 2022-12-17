@@ -5,7 +5,6 @@ import useStorage from 'hooks/useStorage/useStorage';
 import { FaHeadphones } from 'react-icons/fa';
 import {
   BsUpload,
-  BsPencilSquare,
   BsCameraFill,
   BsFilm,
   BsPaletteFill,
@@ -15,8 +14,6 @@ import PostItem from 'components/molecules/PostItem/PostItem';
 import { AuthContext } from 'context/AuthContext/AuthContext';
 import { DocumentData, DocumentReference } from 'firebase/firestore';
 import AddNewPostButton from 'components/atoms/AddNewPostButton/AddNewPostButton';
-
-import EditUserInfo from 'components/molecules/EditUserInfo/EditUserInfo';
 import { useParams } from 'react-router-dom';
 import {
   Wrapper,
@@ -24,7 +21,6 @@ import {
   BackgroundImgWrapper,
   CategoryWrapper,
   DescriptionWrapper,
-  EditUserInfoWrapper,
   ImgWrapper,
   InfoWrapper,
   Number,
@@ -32,18 +28,18 @@ import {
   PostInfo,
   PostWrapper,
   ProfileImage,
-  StyledCloseButton,
   UploadProfileButton,
   Username,
   UserWrapper,
+  StyledEditButton,
 } from './ProfilePage.style';
 
-const ProfilePageV1: React.FC<{ userDocRef: DocumentReference }> = ({
-  userDocRef,
-}) => {
+const ProfilePage: React.FC<{
+  userDocRef: DocumentReference;
+  setIsOpenEditWindow: any;
+}> = ({ userDocRef, setIsOpenEditWindow }) => {
   const [user, setUser] = useState<null | DocumentData>(null);
   const [myAccount, setMyAccount] = useState(false);
-  const [isOpenEditWindow, setIsOpenEditWindow] = useState(false);
   const [posts, setPosts] = useState<DocumentData[]>([]);
   const {
     setFirestoreLoading,
@@ -146,21 +142,6 @@ const ProfilePageV1: React.FC<{ userDocRef: DocumentReference }> = ({
     <Wrapper>
       {user ? (
         <>
-          {isOpenEditWindow ? (
-            <EditUserInfoWrapper>
-              <StyledCloseButton
-                onClick={() => {
-                  setIsOpenEditWindow(false);
-                }}
-              />
-              <EditUserInfo
-                userDocRef={userDocRef}
-                username={user.username}
-                description={user.description}
-                category={user.category}
-              />
-            </EditUserInfoWrapper>
-          ) : null}
           <BackgroundImgWrapper>
             {user.profileImgUrl && user.profileImgUrl != '' ? (
               <BackgroundImg src={user.profileImgUrl} />
@@ -196,7 +177,7 @@ const ProfilePageV1: React.FC<{ userDocRef: DocumentReference }> = ({
             <InfoWrapper>
               <Username>
                 {myAccount ? (
-                  <BsPencilSquare
+                  <StyledEditButton
                     onClick={() => {
                       setIsOpenEditWindow(true);
                     }}
@@ -241,4 +222,4 @@ const ProfilePageV1: React.FC<{ userDocRef: DocumentReference }> = ({
   );
 };
 
-export default ProfilePageV1;
+export default ProfilePage;

@@ -71,7 +71,7 @@ const PostItem: React.FC<PostItemProps> = ({ data }) => {
               <BsTrashFill />
             </DeleteButton>
           ) : null}
-          <StyledLink to={userData.username}>
+          <StyledLink to={`/auth/${userData.username}`}>
             <UserInfo>
               <img
                 src={

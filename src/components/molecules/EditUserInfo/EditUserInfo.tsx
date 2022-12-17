@@ -1,9 +1,17 @@
 import { DocumentData, DocumentReference } from 'firebase/firestore';
 import useFirestore from 'hooks/useFirestore/useFirestore';
 import React, { useState } from 'react';
-import { Button, ErrorMessage, Form, Wrapper } from './EditUserInfo.style';
+import {
+  Button,
+  ErrorMessage,
+  Form,
+  StyledCloseButton,
+  Wrapper,
+} from './EditUserInfo.style';
 
 interface EditUserInfoProps {
+  setIsOpenEditWindow: any;
+  setLoading: any;
   userDocRef: DocumentReference;
   username: string;
   description: string;
@@ -15,6 +23,8 @@ const EditUserInfo: React.FC<EditUserInfoProps> = ({
   username,
   description,
   category,
+  setIsOpenEditWindow,
+  setLoading,
 }) => {
   const [currentUsername, setCurrentUsername] = useState(username);
   const [currentDescription, setCurrentDescription] = useState(description);
@@ -23,9 +33,10 @@ const EditUserInfo: React.FC<EditUserInfoProps> = ({
   const { updateDocument, getQueryCollection } = useFirestore();
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     setError('');
     let validate = true;
-    // e.preventDefault();
 
     if (currentUsername.length < 3 || currentUsername.length >= 20) {
       validate = false;
@@ -46,7 +57,6 @@ const EditUserInfo: React.FC<EditUserInfoProps> = ({
         );
         querySnapshotUsername.forEach((doc: DocumentData) => {
           if (doc.id) {
-            e.preventDefault();
             validate = false;
             setError('Istnieje już konto z taką nazwą użytkownika');
           }
@@ -54,8 +64,6 @@ const EditUserInfo: React.FC<EditUserInfoProps> = ({
       } catch (err) {
         console.log(err);
       }
-    } else {
-      e.preventDefault();
     }
 
     if (validate) {
@@ -64,13 +72,16 @@ const EditUserInfo: React.FC<EditUserInfoProps> = ({
         description: currentDescription,
         category: currentCategory,
       });
-    } else {
-      e.preventDefault();
     }
   };
 
   return (
     <Wrapper>
+      <StyledCloseButton
+        onClick={() => {
+          setIsOpenEditWindow(false);
+        }}
+      />
       <Form onSubmit={handleSubmit}>
         <label>
           Username:

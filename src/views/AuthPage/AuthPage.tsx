@@ -8,7 +8,8 @@ import AuthDeskNav from 'components/molecules/AuthDeskNav/AuthDeskNav';
 import { AuthContext } from 'context/AuthContext/AuthContext';
 import { db } from 'firabase-config';
 import { doc, DocumentData, getDoc, onSnapshot } from 'firebase/firestore';
-import ProfilePageV1 from 'components/organisms/ProfilePage/ProfilePage';
+import ProfilePage from 'components/organisms/ProfilePage/ProfilePage';
+import EditUserInfo from 'components/molecules/EditUserInfo/EditUserInfo';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -18,10 +19,25 @@ const Wrapper = styled.div`
   }
 `;
 
+const EditUserInfoWrapper = styled.div`
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  top: 0;
+  background: rgba(255, 255, 255, 0.5);
+  height: 100vh;
+  width: 100%;
+  z-index: 1000;
+  font-size: ${({ theme }) => theme.fontSize.xxl};
+`;
+
 const AuthPage: React.FC = () => {
   const {
     state: { uid },
   } = useContext(AuthContext);
+  const [isOpenEditWindow, setIsOpenEditWindow] = useState(false);
   const [data, setData] = useState<DocumentData | null | void>(null);
   const [loading, setLoading] = useState(true);
   const userDocRef = doc(db, 'users', uid);
@@ -39,6 +55,7 @@ const AuthPage: React.FC = () => {
       getDocument();
     }
   }, [loading]);
+  
   return (
     <>
       <AuthMobileNav myAccount={data ? data.username : ''} />
@@ -56,7 +73,26 @@ const AuthPage: React.FC = () => {
           <Route path="/auth">
             <Route
               path=":username"
-              element={<ProfilePageV1 userDocRef={userDocRef} />}
+              element={
+                <>
+                  {isOpenEditWindow && data ? (
+                    <EditUserInfoWrapper>
+                      <EditUserInfo
+                        setLoading={setLoading}
+                        setIsOpenEditWindow={setIsOpenEditWindow}
+                        userDocRef={userDocRef}
+                        username={data.username}
+                        description={data.description}
+                        category={data.category}
+                      />
+                    </EditUserInfoWrapper>
+                  ) : null}
+                  <ProfilePage
+                    setIsOpenEditWindow={setIsOpenEditWindow}
+                    userDocRef={userDocRef}
+                  />
+                </>
+              }
             />
           </Route>
           <Route

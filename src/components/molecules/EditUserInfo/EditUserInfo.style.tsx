@@ -1,17 +1,20 @@
+import { BsXCircleFill } from 'react-icons/bs';
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   font-size: ${({ theme }) => theme.fontSize.l};
   width: 80%;
-  margin: auto;
+  padding: 20px 0px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: ${({ theme }) => theme.colors.white};
-  height: 50vh;
+  min-height: max-content;
+  max-height: 100vh;
+  color: ${({ theme }) => theme.colors.darkBlue};
   ${({ theme }) => theme.mq.desktop} {
-    width: 50%;
-    height: 60vh;
+    width: 40%;
   }
 `;
 
@@ -29,7 +32,6 @@ export const Form = styled.form`
     background-color: ${({ theme }) => theme.colors.white};
     border-radius: ${({ theme }) => theme.borderRadius.s};
     border: 2px solid ${({ theme }) => theme.colors.blue};
-    color: ${({ theme }) => theme.colors.darkBlue};
     :focus {
       border: none;
       outline: ${({ theme }) => theme.colors.darkBlue} solid 2px;
@@ -87,4 +89,9 @@ export const ErrorMessage = styled.div`
   font-weight: 700;
   font-size: ${({ theme }) => theme.fontSize.m};
   color: ${({ theme }) => theme.colors.red};
+`;
+
+export const StyledCloseButton = styled(BsXCircleFill)`
+  cursor: pointer;
+  font-size: ${({ theme }) => theme.fontSize.xxl};
 `;
