@@ -1,8 +1,7 @@
-import { AuthContext } from 'context/AuthContext/AuthContext';
 import { db } from 'firabase-config';
 import { Timestamp, collection, addDoc, updateDoc } from 'firebase/firestore';
 import useStorage from 'hooks/useStorage/useStorage';
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Form,
@@ -13,7 +12,7 @@ import {
   Wrapper,
 } from './AddNewPost.style';
 
-const AddNewPost: React.FC = () => {
+const AddNewPost: React.FC<{ uid: string }> = ({ uid }) => {
   const [newPost, setNewPost] = useState<{
     description: string;
     tags: string[];
@@ -25,9 +24,6 @@ const AddNewPost: React.FC = () => {
   const [fileUploaded, setFileUploaded] = useState<any>(null);
   const [reload, setReload] = useState(false);
   const hiddenFileInput = useRef<any>(null);
-  const {
-    state: { uid },
-  } = useContext(AuthContext);
   const { uploadFile, storageLoading } = useStorage();
   const navigate = useNavigate();
 

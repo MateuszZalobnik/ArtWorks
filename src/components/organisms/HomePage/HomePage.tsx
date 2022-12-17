@@ -15,7 +15,7 @@ const Wrapper = styled.div`
 
 const PostWrapper = styled.div``;
 
-const HomePage: React.FC = () => {
+const HomePage: React.FC<{ uid: string }> = ({ uid }) => {
   const [posts, setPosts] = useState<DocumentData[]>([]);
 
   const { getAllCollection, firestoreLoading } = useFirestore();
@@ -37,7 +37,9 @@ const HomePage: React.FC = () => {
       <AddNewPostButton />
       <PostWrapper>
         {posts.length
-          ? posts.map((item) => <PostItem data={item} key={item.id} />)
+          ? posts.map((item) => (
+              <PostItem uid={uid} data={item} key={item.id} />
+            ))
           : null}
       </PostWrapper>
     </Wrapper>

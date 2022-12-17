@@ -1,5 +1,4 @@
-import React, { useContext } from 'react';
-import { AuthContext } from 'context/AuthContext/AuthContext';
+import React from 'react';
 import Logo from 'components/atoms/Logo/Logo';
 import { signOut } from 'firebase/auth';
 import { auth } from 'firabase-config';
@@ -10,13 +9,16 @@ import {
   StyledLink,
   Wrapper,
 } from './AuthDeskNav.style';
+import { useDispatch } from 'react-redux';
+import { logout } from 'actions/actions';
 
 const AuthDeskNav: React.FC<{ myAccount: string }> = ({ myAccount }) => {
-  const { dispatch } = useContext(AuthContext);
+  const dispatch = useDispatch();
+
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
-        dispatch({ type: 'LOGOUT' });
+        dispatch(logout());
       })
       .catch(() => {
         // An error happened.

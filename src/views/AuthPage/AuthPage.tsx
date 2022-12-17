@@ -1,15 +1,17 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import AuthMobileNav from 'components/molecules/AuthMobileNav/AuthMobileNav';
 import styled from 'styled-components';
 import HomePage from 'components/organisms/HomePage/HomePage';
 import AddNewPost from 'components/molecules/AddNewPost/AddNewPost';
 import AuthDeskNav from 'components/molecules/AuthDeskNav/AuthDeskNav';
-import { AuthContext } from 'context/AuthContext/AuthContext';
 import { db } from 'firabase-config';
 import { doc, DocumentData, getDoc, onSnapshot } from 'firebase/firestore';
 import ProfilePage from 'components/organisms/ProfilePage/ProfilePage';
 import EditUserInfo from 'components/molecules/EditUserInfo/EditUserInfo';
+import { useSelector, useDispatch } from 'react-redux';
+import { increment, decrement, setUser } from 'actions/actions';
+import { UserState } from 'features/user/user';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -33,40 +35,52 @@ const EditUserInfoWrapper = styled.div`
   font-size: ${({ theme }) => theme.fontSize.xxl};
 `;
 
-const AuthPage: React.FC = () => {
-  const {
-    state: { uid },
-  } = useContext(AuthContext);
+const AuthPage: React.FC<{ uid: string }> = ({ uid }) => {
+  const state = useSelector((state: { user: UserState }) => state.user);
   const [isOpenEditWindow, setIsOpenEditWindow] = useState(false);
   const [data, setData] = useState<DocumentData | null | void>(null);
   const [loading, setLoading] = useState(true);
+
   const userDocRef = doc(db, 'users', uid);
 
   const getDocument = async () => {
     const docSnap = await getDoc(userDocRef);
     onSnapshot(userDocRef, async (doc) => {
+      dispatch(setUser(docSnap.data(doc.data())));
       setData(docSnap.data(doc.data()));
       setLoading(false);
     });
   };
 
+  // const counter = useSelector((state) => state.counter);
+  // const dispatch = useDispatch();
+  // const increment = () => {
+  //   dispatch({ type: 'INC' });
+  // };
+
+  const counter = useSelector((state: { user: UserState }) => state.user.value);
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    if (loading == true) {
-      getDocument();
-    }
-  }, [loading]);
-  
+    console.log(state);
+    getDocument();
+    // console.log(data);
+  }, [loading, isOpenEditWindow]);
+
   return (
     <>
       <AuthMobileNav myAccount={data ? data.username : ''} />
       <AuthDeskNav myAccount={data ? data.username : ''} />
       <Wrapper>
+        <button onClick={() => dispatch(increment(2))}>+</button>
+        <div>{counter}</div>
+        <button onClick={() => dispatch(decrement())}>-</button>
         <Routes>
           <Route
             path="/auth"
             element={
               <>
-                <HomePage />
+                <HomePage uid={uid} />
               </>
             }
           />
@@ -78,7 +92,6 @@ const AuthPage: React.FC = () => {
                   {isOpenEditWindow && data ? (
                     <EditUserInfoWrapper>
                       <EditUserInfo
-                        setLoading={setLoading}
                         setIsOpenEditWindow={setIsOpenEditWindow}
                         userDocRef={userDocRef}
                         username={data.username}
@@ -88,6 +101,7 @@ const AuthPage: React.FC = () => {
                     </EditUserInfoWrapper>
                   ) : null}
                   <ProfilePage
+                    uid={uid}
                     setIsOpenEditWindow={setIsOpenEditWindow}
                     userDocRef={userDocRef}
                   />
@@ -99,7 +113,7 @@ const AuthPage: React.FC = () => {
             path="/auth/add"
             element={
               <>
-                <AddNewPost />
+                <AddNewPost uid={uid} />
               </>
             }
           />

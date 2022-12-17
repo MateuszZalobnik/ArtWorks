@@ -3,16 +3,17 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import 'assets/styles/fonts.css';
 import reportWebVitals from './reportWebVitals';
-import { AuthContextProvider } from 'context/AuthContext/AuthContext';
+import { Provider } from 'react-redux';
+import { store } from 'store/store';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <AuthContextProvider>
+    <Provider store={store}>
       <App />
-    </AuthContextProvider>
+    </Provider>
   </React.StrictMode>
 );
 

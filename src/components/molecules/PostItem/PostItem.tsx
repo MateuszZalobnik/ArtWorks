@@ -1,11 +1,10 @@
 import { db } from 'firabase-config';
 import { doc, DocumentData } from 'firebase/firestore';
 import useFirestore from 'hooks/useFirestore/useFirestore';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import profilePlaceholder from 'assets/imgs/profilePlaceholder.svg';
 import { BsTrashFill } from 'react-icons/bs';
 import useStorage from 'hooks/useStorage/useStorage';
-import { AuthContext } from 'context/AuthContext/AuthContext';
 import {
   ContentWrapper,
   DateWrapper,
@@ -15,20 +14,24 @@ import {
   UserInfo,
   Wrapper,
 } from './PostItem.style';
+import { useSelector } from 'react-redux';
+import { UserState } from 'features/user/user';
 
 interface PostItemProps {
   data: DocumentData;
+  uid: string;
 }
 
-const PostItem: React.FC<PostItemProps> = ({ data }) => {
+const PostItem: React.FC<PostItemProps> = ({ data, uid }) => {
   const [date, setDate] = useState('');
   const { userData, getDocument, firestoreLoading, deleteDocument } =
     useFirestore();
   const { deleteFile } = useStorage();
   const DocRef = doc(db, 'users', data.userId);
-  const {
-    state: { uid },
-  } = useContext(AuthContext);
+
+  const currentUser = useSelector(
+    (state: { user: UserState }) => state.user.user
+  );
 
   const displayTimestamp = () => {
     const date = new Date(data.timeStamp.seconds * 1000);
@@ -80,7 +83,7 @@ const PostItem: React.FC<PostItemProps> = ({ data }) => {
                     : profilePlaceholder
                 }
               />
-              {userData.username}
+              {userData.id == uid ? currentUser?.username : userData.username}
               <div>{userData.category}</div>
             </UserInfo>
           </StyledLink>

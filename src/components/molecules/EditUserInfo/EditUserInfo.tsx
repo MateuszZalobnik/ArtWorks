@@ -8,10 +8,14 @@ import {
   StyledCloseButton,
   Wrapper,
 } from './EditUserInfo.style';
+import { useDispatch } from 'react-redux';
+import { changeProfile } from 'actions/actions';
+import { UserState } from 'features/user/user';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 interface EditUserInfoProps {
   setIsOpenEditWindow: any;
-  setLoading: any;
   userDocRef: DocumentReference;
   username: string;
   description: string;
@@ -24,13 +28,18 @@ const EditUserInfo: React.FC<EditUserInfoProps> = ({
   description,
   category,
   setIsOpenEditWindow,
-  setLoading,
 }) => {
   const [currentUsername, setCurrentUsername] = useState(username);
   const [currentDescription, setCurrentDescription] = useState(description);
   const [currentCategory, setCurrentCategory] = useState(category);
   const [error, setError] = useState('');
   const { updateDocument, getQueryCollection } = useFirestore();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const currentUser = useSelector(
+    (state: { user: UserState }) => state.user.user
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +56,7 @@ const EditUserInfo: React.FC<EditUserInfoProps> = ({
       setError('Opis może mieć maksymalnie 150 znkaów');
     }
 
-    if (validate) {
+    if (validate && currentUser && currentUsername != currentUser.username) {
       try {
         const querySnapshotUsername = await getQueryCollection(
           'users',
@@ -64,13 +73,18 @@ const EditUserInfo: React.FC<EditUserInfoProps> = ({
       } catch (err) {
         console.log(err);
       }
+    } else if (currentUser == null) {
+      validate = false;
     }
-
     if (validate) {
       updateDocument(userDocRef, {
         username: currentUsername,
         description: currentDescription,
         category: currentCategory,
+      }).then(() => {
+        dispatch(changeProfile(currentUsername));
+        navigate(`/auth/${currentUsername}`);
+        setIsOpenEditWindow(false);
       });
     }
   };

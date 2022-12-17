@@ -1,5 +1,4 @@
-import React, { useContext, useState } from 'react';
-import { AuthContext } from 'context/AuthContext/AuthContext';
+import React, { useState } from 'react';
 import Logo from 'components/atoms/Logo/Logo';
 import { signOut } from 'firebase/auth';
 import { auth } from 'firabase-config';
@@ -11,14 +10,17 @@ import {
   StyledLink,
   Wrapper,
 } from './AuthMobileNav.style';
+import { useDispatch } from 'react-redux';
+import { logout } from 'actions/actions';
 
 const AuthMobileNav: React.FC<{ myAccount: string }> = ({ myAccount }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { dispatch } = useContext(AuthContext);
+  const dispatch = useDispatch();
+
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
-        dispatch({ type: 'LOGOUT' });
+        dispatch(logout());
       })
       .catch(() => {
         // An error happened.

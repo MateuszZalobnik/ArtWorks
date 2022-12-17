@@ -19,7 +19,6 @@ export const UserInfo = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius.s};
   color: ${({ theme }) => theme.colors.white};
   background-color: ${({ theme }) => theme.colors.darkBlue};
-  margin: 10px;
   font-size: ${({ theme }) => theme.fontSize.m};
   display: flex;
   justify-content: space-between;
@@ -72,6 +71,7 @@ export const DateWrapper = styled.div`
 `;
 
 export const StyledLink = styled(Link)`
-text-decoration: none;
-color: ${({ theme }) => theme.colors.white};
-`
+  text-decoration: none;
+  color: ${({ theme }) => theme.colors.white};
+  margin: 10px;
+`;

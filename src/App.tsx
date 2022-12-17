@@ -8,6 +8,10 @@ import NotAuthPage from 'views/NotAuthPage/NotAuthPage';
 import { auth } from 'firabase-config';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import useFirestore from 'hooks/useFirestore/useFirestore';
+import { useDispatch } from 'react-redux';
+import { login } from 'actions/actions';
+import { useSelector } from 'react-redux';
+import { UserState } from 'features/user/user';
 
 const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.darkBlue};
@@ -17,8 +21,13 @@ const Wrapper = styled.div`
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState<null | User>(null);
+
+  const dispatch = useDispatch();
+  const uid = useSelector((state: { user: UserState }) => state.user.uid);
+
   onAuthStateChanged(auth, (user) => {
     if (user) {
+      dispatch(login(user.uid));
       setCurrentUser(user);
     } else {
       setCurrentUser(user);
@@ -27,13 +36,13 @@ const App = () => {
   const { getAllCollection, firestoreLoading } = useFirestore();
 
   useEffect(() => {
-    if (firestoreLoading == true) {
-      getAllCollection('users').then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          // console.log(doc.data());
-        });
-      });
-    }
+    // if (firestoreLoading == true) {
+    //   getAllCollection('users').then((querySnapshot) => {
+    //     querySnapshot.forEach((doc) => {
+    //       // console.log(doc.data());
+    //     });
+    //   });
+    // }
   }, [firestoreLoading]);
 
   return (
@@ -41,7 +50,7 @@ const App = () => {
       <GlobalStyle />
       <Wrapper>
         <BrowserRouter>
-          {currentUser ? <AuthPage /> : <NotAuthPage />}
+          {currentUser && uid ? <AuthPage uid={uid} /> : <NotAuthPage />}
         </BrowserRouter>
       </Wrapper>
     </ThemeProvider>

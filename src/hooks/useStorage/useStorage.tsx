@@ -4,10 +4,14 @@ import { ref, deleteObject } from 'firebase/storage';
 import useFirestore from 'hooks/useFirestore/useFirestore';
 import { uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { DocumentReference } from 'firebase/firestore';
+import { changeProfilePhoto } from 'actions/actions';
+import { useDispatch } from 'react-redux';
 
 const useStorage = () => {
   const [storageLoading, setStorageLoading] = useState(false);
   const { updateDocument } = useFirestore();
+
+  const dispatch = useDispatch();
 
   const deleteFile = async (path: string) => {
     const desertRef = ref(storage, path);
@@ -51,6 +55,7 @@ const useStorage = () => {
             }).then(() => {
               setStorageLoading(false);
             });
+            dispatch(changeProfilePhoto(url));
           });
         } else {
           setStorageLoading(false);

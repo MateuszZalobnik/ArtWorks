@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { auth } from 'firabase-config';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { AuthContext } from 'context/AuthContext/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from 'components/atoms/Logo/Logo';
+import { login } from 'actions/actions';
+import { useDispatch } from 'react-redux';
 
 const Wrapper = styled.div`
   display: flex;
@@ -93,8 +94,8 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { dispatch } = useContext(AuthContext);
 
+  const dispatch = useDispatch();
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -102,7 +103,8 @@ const LoginPage = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         setError('');
-        dispatch({ type: 'LOGIN', payload: user });
+        console.log(user);
+        dispatch(login(user.uid));
         navigate('/auth');
       })
       .catch(() => {
