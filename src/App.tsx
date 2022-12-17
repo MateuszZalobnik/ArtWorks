@@ -30,7 +30,7 @@ const App = () => {
     if (firestoreLoading == true) {
       getAllCollection('users').then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          console.log(doc.data());
+          // console.log(doc.data());
         });
       });
     }

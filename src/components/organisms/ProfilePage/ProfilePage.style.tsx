@@ -173,7 +173,7 @@ export const StyledCloseButton = styled(BsXCircleFill)`
 `;
 
 export const EditUserInfoWrapper = styled.div`
-  position: absolute;
+  position: fixed;
   display: flex;
   align-items: center;
   flex-direction: column;

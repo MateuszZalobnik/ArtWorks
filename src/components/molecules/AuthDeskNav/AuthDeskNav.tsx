@@ -11,7 +11,7 @@ import {
   Wrapper,
 } from './AuthDeskNav.style';
 
-const AuthDeskNav: React.FC = () => {
+const AuthDeskNav: React.FC<{ myAccount: string }> = ({ myAccount }) => {
   const { dispatch } = useContext(AuthContext);
   const handleLogout = () => {
     signOut(auth)
@@ -44,7 +44,7 @@ const AuthDeskNav: React.FC = () => {
           </li>
           <li>
             <StyledLink
-              to="/auth/myaccount"
+              to={'/auth/' + myAccount}
               className={({ isActive }) => (isActive ? 'active' : undefined)}
             >
               moje konto

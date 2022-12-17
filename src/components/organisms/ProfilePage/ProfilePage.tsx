@@ -15,7 +15,11 @@ import PostItem from 'components/molecules/PostItem/PostItem';
 import { AuthContext } from 'context/AuthContext/AuthContext';
 import { DocumentData, DocumentReference } from 'firebase/firestore';
 import AddNewPostButton from 'components/atoms/AddNewPostButton/AddNewPostButton';
+
+import EditUserInfo from 'components/molecules/EditUserInfo/EditUserInfo';
+import { useParams } from 'react-router-dom';
 import {
+  Wrapper,
   BackgroundImg,
   BackgroundImgWrapper,
   CategoryWrapper,
@@ -32,20 +36,17 @@ import {
   UploadProfileButton,
   Username,
   UserWrapper,
-  Wrapper,
 } from './ProfilePage.style';
-import EditUserInfo from 'components/molecules/EditUserInfo/EditUserInfo';
-import { useParams } from 'react-router-dom';
 
-const ProfilePage: React.FC<{ userDocRef: DocumentReference }> = ({
+const ProfilePageV1: React.FC<{ userDocRef: DocumentReference }> = ({
   userDocRef,
 }) => {
-  const { username } = useParams();
+  const [user, setUser] = useState<null | DocumentData>(null);
+  const [myAccount, setMyAccount] = useState(false);
   const [isOpenEditWindow, setIsOpenEditWindow] = useState(false);
   const [posts, setPosts] = useState<DocumentData[]>([]);
   const {
-    userData,
-    getDocument,
+    setFirestoreLoading,
     firestoreLoading,
     getQueryCollection,
     updateDocument,
@@ -56,6 +57,8 @@ const ProfilePage: React.FC<{ userDocRef: DocumentReference }> = ({
     state: { uid },
   } = useContext(AuthContext);
 
+  const { username } = useParams();
+
   const handleClick = () => {
     hiddenFileInput.current.click();
   };
@@ -64,15 +67,15 @@ const ProfilePage: React.FC<{ userDocRef: DocumentReference }> = ({
     const fileUploaded = event.target.files[0];
 
     const uploadImage = async () => {
-      if (userData) {
+      if (user) {
         if (fileUploaded == null) return;
-        if ('profileImgUrl' in userData && userData.profileImgUrl != '') {
-          deleteFile(userData.profileImgUrl);
+        if ('profileImgUrl' in user && user.profileImgUrl != '') {
+          deleteFile(user.profileImgUrl);
           updateDocument(userDocRef, {
             profileImgUrl: '',
           });
         }
-        const imagePath = `artworks/users/${userData.id}/profileImage/${fileUploaded.name}`;
+        const imagePath = `artworks/users/${uid}/profileImage/${fileUploaded.name}`;
         uploadFile(imagePath, fileUploaded, userDocRef, 'profileImgUrl');
       }
     };
@@ -81,8 +84,8 @@ const ProfilePage: React.FC<{ userDocRef: DocumentReference }> = ({
   };
 
   const CategoryView = () => {
-    if (userData) {
-      switch (userData.category) {
+    if (user) {
+      switch (user.category) {
         case 'music':
           return <FaHeadphones />;
           break;
@@ -106,21 +109,42 @@ const ProfilePage: React.FC<{ userDocRef: DocumentReference }> = ({
   };
 
   useEffect(() => {
-    console.log(username);
+    console.log(user);
     if (firestoreLoading == true || storageLoading == true) {
-      getDocument(userDocRef);
-      getQueryCollection('posts', 'userId', '==', uid).then((querySnapshot) => {
-        setPosts([]);
-        querySnapshot.forEach((doc) => {
-          setPosts((prev) => [...prev, doc.data()]);
-        });
-      });
+      if (username) {
+        getQueryCollection('users', 'username', '==', username)
+          .then((querySnapshot) => {
+            setUser(null);
+            querySnapshot.forEach((doc) => {
+              setUser(doc.data());
+            });
+          })
+          .then(() => {
+            if (user) {
+              getQueryCollection('posts', 'userId', '==', user.id)
+                .then((querySnapshot) => {
+                  setPosts([]);
+                  querySnapshot.forEach((doc) => {
+                    setPosts((prev) => [...prev, doc.data()]);
+                  });
+                })
+                .then(() => {
+                  setFirestoreLoading(false);
+                });
+              if (user.id == uid) {
+                setMyAccount(true);
+              } else {
+                setMyAccount(false);
+              }
+            }
+          });
+      }
     }
   }, [uploadFile, firestoreLoading, storageLoading]);
 
   return (
     <Wrapper>
-      {userData ? (
+      {user ? (
         <>
           {isOpenEditWindow ? (
             <EditUserInfoWrapper>
@@ -131,15 +155,15 @@ const ProfilePage: React.FC<{ userDocRef: DocumentReference }> = ({
               />
               <EditUserInfo
                 userDocRef={userDocRef}
-                username={userData.username}
-                description={userData.description}
-                category={userData.category}
+                username={user.username}
+                description={user.description}
+                category={user.category}
               />
             </EditUserInfoWrapper>
           ) : null}
           <BackgroundImgWrapper>
-            {userData.profileImgUrl && userData.profileImgUrl != '' ? (
-              <BackgroundImg src={userData.profileImgUrl} />
+            {user.profileImgUrl && user.profileImgUrl != '' ? (
+              <BackgroundImg src={user.profileImgUrl} />
             ) : null}
           </BackgroundImgWrapper>
 
@@ -147,58 +171,62 @@ const ProfilePage: React.FC<{ userDocRef: DocumentReference }> = ({
             <ImgWrapper>
               <ProfileImage
                 src={
-                  userData.profileImgUrl && userData.profileImgUrl != ''
-                    ? userData.profileImgUrl
+                  user.profileImgUrl && user.profileImgUrl != ''
+                    ? user.profileImgUrl
                     : profilePlaceholder
                 }
               />
-              <UploadProfileButton onClick={handleClick}>
-                <BsUpload />
-              </UploadProfileButton>
-              <input
-                type="file"
-                ref={hiddenFileInput}
-                onChange={handleChange}
-                style={{ display: 'none' }}
-              />
-              {userData.category != '' ? (
+              {myAccount ? (
+                <>
+                  <UploadProfileButton onClick={handleClick}>
+                    <BsUpload />
+                  </UploadProfileButton>
+                  <input
+                    type="file"
+                    ref={hiddenFileInput}
+                    onChange={handleChange}
+                    style={{ display: 'none' }}
+                  />
+                </>
+              ) : null}
+              {user.category != '' ? (
                 <CategoryWrapper>{CategoryView()}</CategoryWrapper>
               ) : null}
             </ImgWrapper>
             <InfoWrapper>
               <Username>
-                <BsPencilSquare
-                  onClick={() => {
-                    setIsOpenEditWindow(true);
-                  }}
-                />
-                {userData.username}
+                {myAccount ? (
+                  <BsPencilSquare
+                    onClick={() => {
+                      setIsOpenEditWindow(true);
+                    }}
+                  />
+                ) : null}
+                {user.username}
               </Username>
               <NumberWrapper>
                 <Number>
-                  {userData.numberOfViews.length}
+                  {user.numberOfViews.length}
                   <span>views</span>
                 </Number>
                 <Number>
-                  {userData.numberOfFollows.length}
+                  {user.numberOfFollows.length}
                   <span>follows</span>
                 </Number>
               </NumberWrapper>
               <DescriptionWrapper>
-                {userData.description != ''
-                  ? userData.description
-                  : 'Brak opisu'}
+                {user.description != '' ? user.description : 'Brak opisu'}
               </DescriptionWrapper>
             </InfoWrapper>
           </UserWrapper>
           <PostWrapper>
-            <AddNewPostButton />
+            {myAccount ? <AddNewPostButton /> : null}
             {posts.length ? (
               posts.map((item: DocumentData) => (
                 <PostItem data={item} key={item.id} />
               ))
             ) : (
-              <PostInfo>Jeszcze nie masz żadnych postów</PostInfo>
+              <PostInfo>Brak postów do wyświetlenia</PostInfo>
             )}
           </PostWrapper>
         </>
@@ -213,4 +241,4 @@ const ProfilePage: React.FC<{ userDocRef: DocumentReference }> = ({
   );
 };
 
-export default ProfilePage;
+export default ProfilePageV1;

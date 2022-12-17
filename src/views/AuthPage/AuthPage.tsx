@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import AuthMobileNav from 'components/molecules/AuthMobileNav/AuthMobileNav';
 import styled from 'styled-components';
@@ -7,8 +7,8 @@ import AddNewPost from 'components/molecules/AddNewPost/AddNewPost';
 import AuthDeskNav from 'components/molecules/AuthDeskNav/AuthDeskNav';
 import { AuthContext } from 'context/AuthContext/AuthContext';
 import { db } from 'firabase-config';
-import { doc } from 'firebase/firestore';
-import ProfilePage from 'components/organisms/ProfilePage/ProfilePage';
+import { doc, DocumentData, getDoc, onSnapshot } from 'firebase/firestore';
+import ProfilePageV1 from 'components/organisms/ProfilePage/ProfilePage';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -22,12 +22,27 @@ const AuthPage: React.FC = () => {
   const {
     state: { uid },
   } = useContext(AuthContext);
-
+  const [data, setData] = useState<DocumentData | null | void>(null);
+  const [loading, setLoading] = useState(true);
   const userDocRef = doc(db, 'users', uid);
+
+  const getDocument = async () => {
+    const docSnap = await getDoc(userDocRef);
+    onSnapshot(userDocRef, async (doc) => {
+      setData(docSnap.data(doc.data()));
+      setLoading(false);
+    });
+  };
+
+  useEffect(() => {
+    if (loading == true) {
+      getDocument();
+    }
+  }, [loading]);
   return (
     <>
-      <AuthMobileNav />
-      <AuthDeskNav />
+      <AuthMobileNav myAccount={data ? data.username : ''} />
+      <AuthDeskNav myAccount={data ? data.username : ''} />
       <Wrapper>
         <Routes>
           <Route
@@ -41,7 +56,7 @@ const AuthPage: React.FC = () => {
           <Route path="/auth">
             <Route
               path=":username"
-              element={<ProfilePage userDocRef={userDocRef} />}
+              element={<ProfilePageV1 userDocRef={userDocRef} />}
             />
           </Route>
           <Route

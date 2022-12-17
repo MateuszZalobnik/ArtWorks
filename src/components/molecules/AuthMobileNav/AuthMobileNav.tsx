@@ -12,7 +12,7 @@ import {
   Wrapper,
 } from './AuthMobileNav.style';
 
-const AuthMobileNav: React.FC = () => {
+const AuthMobileNav: React.FC<{ myAccount: string }> = ({ myAccount }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { dispatch } = useContext(AuthContext);
   const handleLogout = () => {
@@ -53,7 +53,7 @@ const AuthMobileNav: React.FC = () => {
           <li>
             <StyledLink
               onClick={openNav}
-              to="/auth/myaccount"
+              to={'/auth/' + myAccount}
               className={({ isActive }) => (isActive ? 'active' : undefined)}
             >
               moje konto

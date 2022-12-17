@@ -20,12 +20,12 @@ const EditUserInfo: React.FC<EditUserInfoProps> = ({
   const [currentDescription, setCurrentDescription] = useState(description);
   const [currentCategory, setCurrentCategory] = useState(category);
   const [error, setError] = useState('');
-
   const { updateDocument, getQueryCollection } = useFirestore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     setError('');
     let validate = true;
+    // e.preventDefault();
 
     if (currentUsername.length < 3 || currentUsername.length >= 20) {
       validate = false;

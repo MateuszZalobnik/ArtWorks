@@ -24,7 +24,9 @@ const useFirestore = () => {
       const docSnap = await getDoc(DocRef);
       onSnapshot(DocRef, async (doc) => {
         setUserData(docSnap.data(doc.data()));
+        const document: DocumentData | undefined = docSnap.data(doc.data());
         setFirestoreLoading(false);
+        return document;
       });
     } catch (err) {
       console.log('error');
