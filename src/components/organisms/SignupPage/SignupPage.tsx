@@ -80,7 +80,7 @@ const SignupPage = () => {
           }
         });
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     }
     //email validation
@@ -111,9 +111,9 @@ const SignupPage = () => {
           numberOfViews: ['fews3232f2dasf1', 'admk3d2', 'fwescsdsqc'],
           numberOfFollows: ['fews3232f2dasf1', 'admk3d2'],
         });
-        navigate(`/auth/${userData.username}`);
+        navigate(`/${userData.username}`);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     }
   };

@@ -30,26 +30,27 @@ import {
   UserWrapper,
   StyledEditButton,
 } from './ProfilePage.style';
-import { UserState } from 'features/user/user';
+import { UserState } from 'store/user/user';
 import { useSelector } from 'react-redux';
+import { PostsState } from 'store/myPosts/myPosts';
+import AddNewPostButton from 'components/atoms/AddNewPostButton/AddNewPostButton';
+import { setSpinner } from 'store/actions/actions';
+import { useDispatch } from 'react-redux';
 
 const MyAccount: React.FC<{
   uid: string;
   userDocRef: DocumentReference;
   setIsOpenEditWindow: any;
 }> = ({ userDocRef, setIsOpenEditWindow, uid }) => {
-  const [posts, setPosts] = useState<DocumentData[]>([]);
-  const {
-    setFirestoreLoading,
-    firestoreLoading,
-    getQueryCollection,
-    updateDocument,
-  } = useFirestore();
+  const { firestoreLoading, updateDocument } = useFirestore();
   const { deleteFile, uploadFile, storageLoading } = useStorage();
   const hiddenFileInput = useRef<any>(null);
-
+  const dispatch = useDispatch();
   const currentUser = useSelector(
     (state: { user: UserState }) => state.user.user
+  );
+  const currentPosts = useSelector(
+    (state: { myposts: PostsState }) => state.myposts.posts
   );
 
   const handleClick = () => {
@@ -62,6 +63,7 @@ const MyAccount: React.FC<{
     const uploadImage = async () => {
       if (currentUser) {
         if (fileUploaded == null) return;
+        dispatch(setSpinner(true));
         if ('profileImgUrl' in currentUser && currentUser.profileImgUrl != '') {
           deleteFile(currentUser.profileImgUrl);
           updateDocument(userDocRef, {
@@ -72,8 +74,12 @@ const MyAccount: React.FC<{
         uploadFile(imagePath, fileUploaded, userDocRef, 'profileImgUrl');
       }
     };
-
-    uploadImage();
+    if (fileUploaded.size < 200000) {
+      uploadImage();
+    } else {
+      alert('maksymalny rozmiar pliku to 200kB');
+      return;
+    }
   };
 
   const CategoryView = () => {
@@ -101,22 +107,6 @@ const MyAccount: React.FC<{
     }
   };
 
-  useEffect(() => {
-    console.log(currentUser);
-    if (currentUser && firestoreLoading == true) {
-      getQueryCollection('posts', 'userId', '==', currentUser.id)
-        .then((querySnapshot) => {
-          setPosts([]);
-          querySnapshot.forEach((doc) => {
-            setPosts((prev) => [...prev, doc.data()]);
-          });
-        })
-        .then(() => {
-          setFirestoreLoading(false);
-        });
-    }
-  }, [uploadFile, firestoreLoading, storageLoading]);
-
   return (
     <Wrapper>
       {currentUser ? (
@@ -142,6 +132,7 @@ const MyAccount: React.FC<{
                 </UploadProfileButton>
                 <input
                   type="file"
+                  accept="image/*"
                   ref={hiddenFileInput}
                   onChange={handleChange}
                   style={{ display: 'none' }}
@@ -178,8 +169,9 @@ const MyAccount: React.FC<{
             </InfoWrapper>
           </UserWrapper>
           <PostWrapper>
-            {posts.length ? (
-              posts.map((item: DocumentData) => (
+            <AddNewPostButton />
+            {currentPosts && currentPosts.length ? (
+              currentPosts.map((item: DocumentData) => (
                 <PostItem data={item} uid={uid} key={item.id} />
               ))
             ) : (

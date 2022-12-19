@@ -3,9 +3,16 @@ import { doc, DocumentData } from 'firebase/firestore';
 import useFirestore from 'hooks/useFirestore/useFirestore';
 import React, { useEffect, useState } from 'react';
 import profilePlaceholder from 'assets/imgs/profilePlaceholder.svg';
-import { BsTrashFill } from 'react-icons/bs';
+import {
+  BsCameraFill,
+  BsFilm,
+  BsPaletteFill,
+  BsPlusLg,
+  BsTrashFill,
+} from 'react-icons/bs';
 import useStorage from 'hooks/useStorage/useStorage';
 import {
+  CategoryWrapper,
   ContentWrapper,
   DateWrapper,
   DeleteButton,
@@ -15,11 +22,14 @@ import {
   Wrapper,
 } from './PostItem.style';
 import { useSelector } from 'react-redux';
-import { UserState } from 'features/user/user';
+import { UserState } from 'store/user/user';
+import { FaHeadphones } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { setAllPosts, setPosts, setSpinner } from 'store/actions/actions';
 
 interface PostItemProps {
   data: DocumentData;
-  uid: string;
+  uid: string | null;
 }
 
 const PostItem: React.FC<PostItemProps> = ({ data, uid }) => {
@@ -28,10 +38,37 @@ const PostItem: React.FC<PostItemProps> = ({ data, uid }) => {
     useFirestore();
   const { deleteFile } = useStorage();
   const DocRef = doc(db, 'users', data.userId);
+  const { getQueryCollection, getAllCollection } = useFirestore();
+  const dispatch = useDispatch();
 
   const currentUser = useSelector(
     (state: { user: UserState }) => state.user.user
   );
+
+  const CategoryView = () => {
+    if (userData) {
+      switch (userData.category) {
+        case 'music':
+          return <FaHeadphones />;
+          break;
+        case 'photo':
+          return <BsCameraFill />;
+          break;
+        case 'movie':
+          return <BsFilm />;
+          break;
+        case 'painting':
+          return <BsPaletteFill />;
+          break;
+        case 'other':
+          return <BsPlusLg />;
+          break;
+
+        default:
+          break;
+      }
+    }
+  };
 
   const displayTimestamp = () => {
     const date = new Date(data.timeStamp.seconds * 1000);
@@ -47,11 +84,37 @@ const PostItem: React.FC<PostItemProps> = ({ data, uid }) => {
   };
 
   const handleDelete = async (id: string) => {
+    dispatch(setSpinner(true));
     if (data.mediaUrl && data.mediaUrl != '') {
       const filePath = data.mediaUrl;
       deleteFile(filePath);
     }
-    deleteDocument('posts', id);
+    deleteDocument('posts', id).then(() => {
+      const posts: DocumentData[] = [];
+      if (uid) {
+        getQueryCollection('posts', 'userId', '==', uid)
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              posts.push(doc.data());
+            });
+          })
+          .then(() => {
+            dispatch(setPosts(posts));
+          });
+      }
+
+      const allPosts: DocumentData[] = [];
+      getAllCollection('posts')
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            allPosts.push(doc.data());
+          });
+        })
+        .then(() => {
+          dispatch(setAllPosts(allPosts));
+          dispatch(setSpinner(false));
+        });
+    });
   };
 
   useEffect(() => {
@@ -70,11 +133,14 @@ const PostItem: React.FC<PostItemProps> = ({ data, uid }) => {
         <>
           <DateWrapper>{date}</DateWrapper>
           {userData.id == uid ? (
-            <DeleteButton onClick={() => handleDelete(data.id)}>
+            <DeleteButton
+              className="deleteBtn"
+              onClick={() => handleDelete(data.id)}
+            >
               <BsTrashFill />
             </DeleteButton>
           ) : null}
-          <StyledLink to={`/auth/${userData.username}`}>
+          <StyledLink to={`/${userData.username}`}>
             <UserInfo>
               <img
                 src={
@@ -84,7 +150,7 @@ const PostItem: React.FC<PostItemProps> = ({ data, uid }) => {
                 }
               />
               {userData.id == uid ? currentUser?.username : userData.username}
-              <div>{userData.category}</div>
+              <CategoryWrapper>{CategoryView()}</CategoryWrapper>
             </UserInfo>
           </StyledLink>
         </>

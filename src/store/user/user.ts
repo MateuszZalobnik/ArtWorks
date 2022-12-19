@@ -1,8 +1,6 @@
 import { Reducer } from 'redux';
 
 export enum UserActionTypes {
-  INC = 'INC',
-  DEC = 'DEC',
   SET_USER = 'SET_USER',
   CHANGE_PROFILE = 'CHANGE_PROFILE',
   CHANGE_PROFILE_PHOTO = 'CHANGE_PROFILE_PHOTO',
@@ -11,7 +9,6 @@ export enum UserActionTypes {
 }
 
 export interface UserState {
-  value: number;
   uid: string | null;
   user: {
     id: string;
@@ -25,10 +22,7 @@ export interface UserState {
 }
 
 const initialState: UserState = {
-  value: 0,
   uid: null,
-  //   username: null,
-  //   email: null,
   user: null,
 };
 
@@ -37,16 +31,6 @@ export const userReducer: Reducer<UserState> = (
   action
 ) => {
   switch (action.type) {
-    case UserActionTypes.INC:
-      return {
-        ...state,
-        value: state.value + action.payload,
-      };
-    case UserActionTypes.DEC:
-      return {
-        ...state,
-        value: state.value - 1,
-      };
     case UserActionTypes.SET_USER:
       return {
         ...state,

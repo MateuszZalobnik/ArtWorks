@@ -52,7 +52,7 @@ export const StyledEditButton = styled(BsPencilSquare)`
   cursor: pointer;
 `;
 
-export const UploadProfileButton = styled.div`
+export const UploadProfileButton = styled.button`
   font-size: ${({ theme }) => theme.fontSize.l};
   position: absolute;
   left: 10px;
@@ -60,6 +60,7 @@ export const UploadProfileButton = styled.div`
   cursor: pointer;
   border-radius: 50%;
   padding: 5px;
+  border: none;
   background-color: ${({ theme }) => theme.colors.white};
   opacity: 0.4;
   :hover {

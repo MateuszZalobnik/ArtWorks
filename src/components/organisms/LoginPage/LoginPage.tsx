@@ -4,7 +4,7 @@ import { auth } from 'firabase-config';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from 'components/atoms/Logo/Logo';
-import { login } from 'actions/actions';
+import { login } from 'store/actions/actions';
 import { useDispatch } from 'react-redux';
 
 const Wrapper = styled.div`
@@ -103,7 +103,6 @@ const LoginPage = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         setError('');
-        console.log(user);
         dispatch(login(user.uid));
         navigate('/auth');
       })

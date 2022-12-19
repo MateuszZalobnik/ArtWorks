@@ -1,16 +1,8 @@
-import { UserActionTypes } from 'features/user/user';
+import { AllPostsActionTypes } from 'store/allPosts/allPosts';
+import { PostsActionTypes } from 'store/myPosts/myPosts';
+import { SpinnerActionTypes } from 'store/spinner/spinner';
+import { UserActionTypes } from 'store/user/user';
 import { DocumentData } from 'firebase/firestore';
-
-export const increment = (value: number) => {
-  return {
-    type: UserActionTypes.INC,
-    payload: value,
-  };
-};
-
-export const decrement = () => ({
-  type: UserActionTypes.DEC,
-});
 
 export const setUser = (user: DocumentData | undefined) => {
   return {
@@ -43,5 +35,26 @@ export const login = (uid: string) => {
 export const logout = () => {
   return {
     type: UserActionTypes.LOGOUT,
+  };
+};
+
+export const setPosts = (posts: object[]) => {
+  return {
+    type: PostsActionTypes.SET_POSTS,
+    payload: posts,
+  };
+};
+
+export const setAllPosts = (posts: object[]) => {
+  return {
+    type: AllPostsActionTypes.SET_ALL_POSTS,
+    payload: posts,
+  };
+};
+
+export const setSpinner = (value: boolean) => {
+  return {
+    type: SpinnerActionTypes.SET_SPINNER,
+    payload: value,
   };
 };

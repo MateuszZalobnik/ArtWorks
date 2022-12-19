@@ -1,7 +1,16 @@
+import { setAllPosts, setPosts, setSpinner } from 'store/actions/actions';
 import { db } from 'firabase-config';
-import { Timestamp, collection, addDoc, updateDoc } from 'firebase/firestore';
+import {
+  Timestamp,
+  collection,
+  addDoc,
+  updateDoc,
+  DocumentData,
+} from 'firebase/firestore';
+import useFirestore from 'hooks/useFirestore/useFirestore';
 import useStorage from 'hooks/useStorage/useStorage';
 import React, { useEffect, useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
   Form,
@@ -20,17 +29,27 @@ const AddNewPost: React.FC<{ uid: string }> = ({ uid }) => {
     description: '',
     tags: [],
   });
+  const [btn, setBtn] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [fileUploaded, setFileUploaded] = useState<any>(null);
-  const [reload, setReload] = useState(false);
+  const [fileUploaded, setFileUploaded] = useState<HTMLInputElement | null>(
+    null
+  );
   const hiddenFileInput = useRef<any>(null);
   const { uploadFile, storageLoading } = useStorage();
   const navigate = useNavigate();
+  const { getQueryCollection, getAllCollection } = useFirestore();
+  const dispatch = useDispatch();
 
   const handleChange = (event: any) => {
     const file = event.target.files[0];
     if (file == null) return;
-    setFileUploaded(file);
+    if (file.size < 200000) {
+      setFileUploaded(file);
+      setError('');
+    } else {
+      setError('maksymalny rozmiar pliku to 200kB');
+      return;
+    }
   };
 
   const handlePost = (e: React.FormEvent) => {
@@ -60,9 +79,32 @@ const AddNewPost: React.FC<{ uid: string }> = ({ uid }) => {
       addPost = false;
     }
     if (addPost) {
+      setBtn(true);
       setError(null);
       addNewPost().then(() => {
-        setReload(true);
+        const posts: DocumentData[] = [];
+        const allPosts: DocumentData[] = [];
+        getQueryCollection('posts', 'userId', '==', uid)
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              posts.push(doc.data());
+            });
+          })
+          .then(() => {
+            dispatch(setPosts(posts));
+          })
+          .then(() => {
+            getAllCollection('posts')
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  allPosts.push(doc.data());
+                });
+              })
+              .then(() => {
+                dispatch(setAllPosts(allPosts));
+              })
+              .then(() => navigate('/auth'));
+          });
       });
     } else {
       setError('Dodaj opis');
@@ -84,15 +126,6 @@ const AddNewPost: React.FC<{ uid: string }> = ({ uid }) => {
   const handleClick = () => {
     hiddenFileInput.current.click();
   };
-
-  useEffect(() => {
-    if (
-      (storageLoading == false && fileUploaded != null) ||
-      (fileUploaded == null && reload == true)
-    ) {
-      navigate('/auth');
-    }
-  }, [storageLoading, reload]);
 
   return (
     <Wrapper>
@@ -116,6 +149,7 @@ const AddNewPost: React.FC<{ uid: string }> = ({ uid }) => {
         <UploadStyled onClick={handleClick} />
         <input
           type="file"
+          accept="image/*"
           ref={hiddenFileInput}
           onChange={handleChange}
           style={{ display: 'none' }}
@@ -123,7 +157,9 @@ const AddNewPost: React.FC<{ uid: string }> = ({ uid }) => {
         {fileUploaded ? fileUploaded.name : null}
         {error ? <ErrorMessage>{error}</ErrorMessage> : null}
 
-        <Button type="submit">dodaj</Button>
+        <Button type="submit" disabled={btn}>
+          dodaj
+        </Button>
       </Form>
     </Wrapper>
   );

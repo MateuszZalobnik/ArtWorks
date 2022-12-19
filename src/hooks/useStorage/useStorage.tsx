@@ -4,7 +4,7 @@ import { ref, deleteObject } from 'firebase/storage';
 import useFirestore from 'hooks/useFirestore/useFirestore';
 import { uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { DocumentReference } from 'firebase/firestore';
-import { changeProfilePhoto } from 'actions/actions';
+import { changeProfilePhoto, setSpinner } from 'store/actions/actions';
 import { useDispatch } from 'react-redux';
 
 const useStorage = () => {
@@ -30,6 +30,7 @@ const useStorage = () => {
     uploadTask.on(
       'state_changed',
       (snapshot) => {
+        dispatch(setSpinner(true));
         setStorageLoading(true);
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -54,11 +55,15 @@ const useStorage = () => {
               [key]: url,
             }).then(() => {
               setStorageLoading(false);
+              dispatch(setSpinner(false));
+              if (key == 'profileImgUrl') {
+                dispatch(changeProfilePhoto(url));
+              }
             });
-            dispatch(changeProfilePhoto(url));
           });
         } else {
           setStorageLoading(false);
+          dispatch(setSpinner(false));
         }
       }
     );

@@ -9,8 +9,8 @@ import {
   Wrapper,
 } from './EditUserInfo.style';
 import { useDispatch } from 'react-redux';
-import { changeProfile } from 'actions/actions';
-import { UserState } from 'features/user/user';
+import { changeProfile } from 'store/actions/actions';
+import { UserState } from 'store/user/user';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -71,7 +71,7 @@ const EditUserInfo: React.FC<EditUserInfoProps> = ({
           }
         });
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     } else if (currentUser == null) {
       validate = false;
@@ -83,7 +83,7 @@ const EditUserInfo: React.FC<EditUserInfoProps> = ({
         category: currentCategory,
       }).then(() => {
         dispatch(changeProfile(currentUsername));
-        navigate(`/auth/${currentUsername}`);
+        navigate(`/${currentUsername}`);
         setIsOpenEditWindow(false);
       });
     }

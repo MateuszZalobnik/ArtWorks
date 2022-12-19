@@ -9,9 +9,12 @@ import { auth } from 'firabase-config';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import useFirestore from 'hooks/useFirestore/useFirestore';
 import { useDispatch } from 'react-redux';
-import { login } from 'actions/actions';
+import { login, setAllPosts } from 'store/actions/actions';
 import { useSelector } from 'react-redux';
-import { UserState } from 'features/user/user';
+import { UserState } from 'store/user/user';
+import { DocumentData } from 'firebase/firestore';
+import { AllPostsState } from 'store/allPosts/allPosts';
+import LoadingSpinner from 'components/molecules/LoadingSpinner/LoadingSpinner';
 
 const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.darkBlue};
@@ -21,7 +24,9 @@ const Wrapper = styled.div`
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState<null | User>(null);
-
+  const currentPosts = useSelector(
+    (state: { allposts: AllPostsState }) => state.allposts.posts
+  );
   const dispatch = useDispatch();
   const uid = useSelector((state: { user: UserState }) => state.user.uid);
 
@@ -35,14 +40,21 @@ const App = () => {
   });
   const { getAllCollection, firestoreLoading } = useFirestore();
 
+  const getPosts = async () => {
+    const posts: DocumentData[] = [];
+    getAllCollection('posts')
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          posts.push(doc.data());
+        });
+      })
+      .then(() => {
+        dispatch(setAllPosts(posts));
+      });
+  };
+
   useEffect(() => {
-    // if (firestoreLoading == true) {
-    //   getAllCollection('users').then((querySnapshot) => {
-    //     querySnapshot.forEach((doc) => {
-    //       // console.log(doc.data());
-    //     });
-    //   });
-    // }
+    getPosts();
   }, [firestoreLoading]);
 
   return (
@@ -50,6 +62,7 @@ const App = () => {
       <GlobalStyle />
       <Wrapper>
         <BrowserRouter>
+          <LoadingSpinner />
           {currentUser && uid ? <AuthPage uid={uid} /> : <NotAuthPage />}
         </BrowserRouter>
       </Wrapper>

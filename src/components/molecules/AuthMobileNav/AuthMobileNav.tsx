@@ -11,7 +11,7 @@ import {
   Wrapper,
 } from './AuthMobileNav.style';
 import { useDispatch } from 'react-redux';
-import { logout } from 'actions/actions';
+import { logout } from 'store/actions/actions';
 
 const AuthMobileNav: React.FC<{ myAccount: string }> = ({ myAccount }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -55,7 +55,7 @@ const AuthMobileNav: React.FC<{ myAccount: string }> = ({ myAccount }) => {
           <li>
             <StyledLink
               onClick={openNav}
-              to={'/auth/' + myAccount}
+              to={'/'+myAccount}
               className={({ isActive }) => (isActive ? 'active' : undefined)}
             >
               moje konto

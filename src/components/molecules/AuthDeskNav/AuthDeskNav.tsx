@@ -10,7 +10,7 @@ import {
   Wrapper,
 } from './AuthDeskNav.style';
 import { useDispatch } from 'react-redux';
-import { logout } from 'actions/actions';
+import { logout } from 'store/actions/actions';
 
 const AuthDeskNav: React.FC<{ myAccount: string }> = ({ myAccount }) => {
   const dispatch = useDispatch();
@@ -46,7 +46,7 @@ const AuthDeskNav: React.FC<{ myAccount: string }> = ({ myAccount }) => {
           </li>
           <li>
             <StyledLink
-              to={'/auth/' + myAccount}
+              to={'/' + myAccount}
               className={({ isActive }) => (isActive ? 'active' : undefined)}
             >
               moje konto

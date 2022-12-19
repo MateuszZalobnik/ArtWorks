@@ -41,6 +41,9 @@ export const Button = styled.button`
   border: none;
   padding: 10px;
   cursor: pointer;
+  :disabled {
+    opacity: 0.6;
+  }
 `;
 
 export const Textarea = styled.textarea`

@@ -13,6 +13,11 @@ export const Wrapper = styled.div`
   color: ${({ theme }) => theme.colors.darkBlue};
   background-color: ${({ theme }) => theme.colors.white};
   border-radius: ${({ theme }) => theme.borderRadius.s};
+
+  :hover .deleteBtn {
+  display: block;
+
+  }
 `;
 
 export const UserInfo = styled.div`
@@ -54,6 +59,7 @@ export const DescriptionWrapper = styled.div`
 `;
 
 export const DeleteButton = styled.div`
+display: none;
   position: absolute;
   left: 0;
   top: -30px;
@@ -74,4 +80,16 @@ export const StyledLink = styled(Link)`
   text-decoration: none;
   color: ${({ theme }) => theme.colors.white};
   margin: 10px;
+`;
+
+export const CategoryWrapper = styled.div`
+  background-color: ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.darkBlue};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: ${({ theme }) => theme.fontSize.xxl};
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
 `;

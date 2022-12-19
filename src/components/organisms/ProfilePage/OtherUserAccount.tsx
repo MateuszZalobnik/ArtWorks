@@ -23,7 +23,7 @@ import {
   UserWrapper,
 } from './ProfilePage.style';
 
-const OtherUserAccount: React.FC<{ uid: string }> = ({ uid }) => {
+const OtherUserAccount: React.FC = () => {
   const [user, setUser] = useState<null | DocumentData>(null);
   const [posts, setPosts] = useState<DocumentData[]>([]);
   const { setFirestoreLoading, firestoreLoading, getQueryCollection } =
@@ -57,8 +57,6 @@ const OtherUserAccount: React.FC<{ uid: string }> = ({ uid }) => {
   };
 
   useEffect(() => {
-    // console.log(user);
-    console.log('otheruser');
     if (firestoreLoading == true && username) {
       getQueryCollection('users', 'username', '==', username)
         .then((querySnapshot) => {
@@ -127,7 +125,7 @@ const OtherUserAccount: React.FC<{ uid: string }> = ({ uid }) => {
           <PostWrapper>
             {posts.length ? (
               posts.map((item: DocumentData) => (
-                <PostItem uid={uid} data={item} key={item.id} />
+                <PostItem uid={null} data={item} key={item.id} />
               ))
             ) : (
               <PostInfo>Brak postów do wyświetlenia</PostInfo>

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { DocumentReference } from 'firebase/firestore';
 import { useParams } from 'react-router-dom';
-import { UserState } from 'features/user/user';
+import { UserState } from 'store/user/user';
 import { useSelector } from 'react-redux';
 import MyAccount from './MyAccount';
 import OtherUserAccount from './OtherUserAccount';
 
 const ProfilePage: React.FC<{
-  uid: string;
-  userDocRef: DocumentReference;
-  setIsOpenEditWindow: any;
+  uid: string|null;
+  userDocRef: DocumentReference|null;
+  setIsOpenEditWindow: any|null;
 }> = ({ userDocRef, setIsOpenEditWindow, uid }) => {
   const [myAccount, setMyAccount] = useState(false);
   const currentUser = useSelector(
@@ -26,14 +26,14 @@ const ProfilePage: React.FC<{
     }
   }, [username, currentUser]);
 
-  return myAccount ? (
+  return (myAccount && uid && userDocRef && setIsOpenEditWindow) ? (
     <MyAccount
       uid={uid}
       setIsOpenEditWindow={setIsOpenEditWindow}
       userDocRef={userDocRef}
     />
   ) : (
-    <OtherUserAccount uid={uid} />
+    <OtherUserAccount />
   );
 };
 

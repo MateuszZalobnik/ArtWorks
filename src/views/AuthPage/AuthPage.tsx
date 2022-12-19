@@ -9,9 +9,9 @@ import { db } from 'firabase-config';
 import { doc, DocumentData, getDoc, onSnapshot } from 'firebase/firestore';
 import ProfilePage from 'components/organisms/ProfilePage/ProfilePage';
 import EditUserInfo from 'components/molecules/EditUserInfo/EditUserInfo';
-import { useSelector, useDispatch } from 'react-redux';
-import { increment, decrement, setUser } from 'actions/actions';
-import { UserState } from 'features/user/user';
+import { useDispatch } from 'react-redux';
+import { setPosts, setUser } from 'store/actions/actions';
+import useFirestore from 'hooks/useFirestore/useFirestore';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -36,45 +36,47 @@ const EditUserInfoWrapper = styled.div`
 `;
 
 const AuthPage: React.FC<{ uid: string }> = ({ uid }) => {
-  const state = useSelector((state: { user: UserState }) => state.user);
   const [isOpenEditWindow, setIsOpenEditWindow] = useState(false);
   const [data, setData] = useState<DocumentData | null | void>(null);
-  const [loading, setLoading] = useState(true);
-
+  const [userLoading, setUserLoading] = useState(true);
+  const [postsLoading, setPostsLoading] = useState(true);
+  const { getQueryCollection } = useFirestore();
   const userDocRef = doc(db, 'users', uid);
+  const dispatch = useDispatch();
 
   const getDocument = async () => {
     const docSnap = await getDoc(userDocRef);
     onSnapshot(userDocRef, async (doc) => {
       dispatch(setUser(docSnap.data(doc.data())));
       setData(docSnap.data(doc.data()));
-      setLoading(false);
+      setUserLoading(false);
     });
   };
 
-  // const counter = useSelector((state) => state.counter);
-  // const dispatch = useDispatch();
-  // const increment = () => {
-  //   dispatch({ type: 'INC' });
-  // };
-
-  const counter = useSelector((state: { user: UserState }) => state.user.value);
-  const dispatch = useDispatch();
+  const getMyPosts = async () => {
+    const posts: DocumentData[] = [];
+    getQueryCollection('posts', 'userId', '==', uid)
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          posts.push(doc.data());
+        });
+      })
+      .then(() => {
+        dispatch(setPosts(posts));
+        setPostsLoading(false);
+      });
+  };
 
   useEffect(() => {
-    console.log(state);
     getDocument();
-    // console.log(data);
-  }, [loading, isOpenEditWindow]);
+    getMyPosts();
+  }, [userLoading, postsLoading, isOpenEditWindow]);
 
   return (
     <>
       <AuthMobileNav myAccount={data ? data.username : ''} />
       <AuthDeskNav myAccount={data ? data.username : ''} />
       <Wrapper>
-        <button onClick={() => dispatch(increment(2))}>+</button>
-        <div>{counter}</div>
-        <button onClick={() => dispatch(decrement())}>-</button>
         <Routes>
           <Route
             path="/auth"
@@ -84,31 +86,29 @@ const AuthPage: React.FC<{ uid: string }> = ({ uid }) => {
               </>
             }
           />
-          <Route path="/auth">
-            <Route
-              path=":username"
-              element={
-                <>
-                  {isOpenEditWindow && data ? (
-                    <EditUserInfoWrapper>
-                      <EditUserInfo
-                        setIsOpenEditWindow={setIsOpenEditWindow}
-                        userDocRef={userDocRef}
-                        username={data.username}
-                        description={data.description}
-                        category={data.category}
-                      />
-                    </EditUserInfoWrapper>
-                  ) : null}
-                  <ProfilePage
-                    uid={uid}
-                    setIsOpenEditWindow={setIsOpenEditWindow}
-                    userDocRef={userDocRef}
-                  />
-                </>
-              }
-            />
-          </Route>
+          <Route
+            path=":username"
+            element={
+              <>
+                {isOpenEditWindow && data ? (
+                  <EditUserInfoWrapper>
+                    <EditUserInfo
+                      setIsOpenEditWindow={setIsOpenEditWindow}
+                      userDocRef={userDocRef}
+                      username={data.username}
+                      description={data.description}
+                      category={data.category}
+                    />
+                  </EditUserInfoWrapper>
+                ) : null}
+                <ProfilePage
+                  uid={uid}
+                  setIsOpenEditWindow={setIsOpenEditWindow}
+                  userDocRef={userDocRef}
+                />
+              </>
+            }
+          />
           <Route
             path="/auth/add"
             element={
