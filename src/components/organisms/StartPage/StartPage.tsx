@@ -5,6 +5,7 @@ import {
   Content,
   H2,
   LoginButton,
+  PostWrapper,
   SignupButton,
   Wrapper,
 } from './StartPage.style';
@@ -23,7 +24,9 @@ const StartPage = () => {
           </ButtonsWrapper>
         </Content>
       </Wrapper>
-      <HomePage uid={null} />
+      <PostWrapper>
+        <HomePage uid={null} />
+      </PostWrapper>
     </>
   );
 };

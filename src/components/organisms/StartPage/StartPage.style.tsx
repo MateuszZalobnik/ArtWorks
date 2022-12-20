@@ -74,3 +74,8 @@ export const Content = styled.div`
     justify-content: space-between;
   }
 `;
+
+export const PostWrapper = styled.div`
+  margin: auto;
+  width: 50%;
+`;
