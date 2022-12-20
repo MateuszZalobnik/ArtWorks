@@ -1,13 +1,19 @@
-# ArtWorks - React app
+# [ArtWorks](https://63a19764715da27a9fc7861d--graceful-arithmetic-ead2d2.netlify.app/) - React app
 
 This app was made for artists. ArtWorks is a platfrom where people can public their phtotos, music, movies etc. and creating an artistic portfolio, but if you are not an artist you can discover amazing talents and consume content.
 
 ## Technologies
 
 TypeScript
-Firebase
+
 Create React App
+
+React Redux
+
+Firebase
+
 Styled Components
+
 React Router Dom
 
 ## Project Roadmap
