@@ -25,3 +25,8 @@ React Router Dom
 - [ ] following and views from verifed accounts
 - [ ] logging in with a google account
 - [ ] filtering by tags
+
+## Application view
+
+![desk](https://user-images.githubusercontent.com/77732992/208664193-f2eaeab6-351a-41d5-ba3b-3b37a179756e.jpg)
+![mobilejpg](https://user-images.githubusercontent.com/77732992/208664514-e402b205-7bb0-4d6c-8c2c-d732b024abaa.jpg)
