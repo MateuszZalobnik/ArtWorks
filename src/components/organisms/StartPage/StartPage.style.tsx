@@ -77,5 +77,8 @@ export const Content = styled.div`
 
 export const PostWrapper = styled.div`
   margin: auto;
-  width: 50%;
+  width: 100%;
+  ${({ theme }) => theme.mq.desktop} {
+    width: 50%;
+  }
 `;
